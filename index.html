@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- saved from url=(0055)file:///C:/Users/natha/Downloads/leanacademy-sql_1.html -->
+<!-- saved from url=(0055)file:///C:/Users/natha/Downloads/leanacademy-sql_2.html -->
 <html lang="pt-BR"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>LeanAcademy SQL</title>
 <link rel="preconnect" href="https://fonts.googleapis.com/">
-<link href="./index_files/css2" rel="stylesheet">
+<link href="./LeanAcademy SQL_files/css2" rel="stylesheet">
 <style>
 :root{
   --bg:#0c0e14;--bg2:#13151e;--bg3:#1a1d28;--bg4:#1e2235;
@@ -102,21 +102,25 @@ textarea#sqled::placeholder{color:var(--text3)}
 .rt{font-family:var(--mono);color:var(--green)}
 .rtype{font-size:0.65rem;color:var(--text3);font-family:var(--mono);padding:2px 6px;background:var(--bg4);border-radius:4px}
 .rvia{font-size:0.7rem;color:var(--text3);margin-left:auto;font-family:var(--mono)}
+/* CHALLENGES */
 .chlayout{display:grid;grid-template-columns:340px 1fr;height:100%;overflow:hidden}
 .chsb{border-right:1px solid var(--border);overflow-y:auto}
 .chsbh{padding:1rem 1.2rem;border-bottom:1px solid var(--border);background:var(--bg2);position:sticky;top:0}
-.chsbh h2{font-size:0.9rem;font-weight:700;margin-bottom:4px}
+.chsbh h2{font-size:0.9rem;font-weight:700;margin-bottom:2px}
 .chsbh p{font-size:0.72rem;color:var(--text3)}
-.chpb{height:3px;background:var(--border);border-radius:3px;margin-top:10px;overflow:hidden}
+.chpb{height:3px;background:var(--border);border-radius:3px;margin-top:8px;overflow:hidden}
 .chpf{height:100%;background:var(--green);border-radius:3px;transition:width 0.4s}
-.chitem{padding:12px 1.2rem;border-bottom:1px solid var(--border);cursor:pointer;transition:background 0.1s;display:flex;align-items:center;gap:10px}
+/* section divider inside list */
+.ch-section-hdr{padding:8px 1.2rem 4px;font-size:0.6rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text3);background:var(--bg);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:1;display:flex;align-items:center;gap:8px}
+.ch-section-hdr .sec-badge{font-size:0.55rem;padding:1px 6px;border-radius:20px;font-weight:700;letter-spacing:0.05em}
+.chitem{padding:11px 1.2rem;border-bottom:1px solid var(--border);cursor:pointer;transition:background 0.1s;display:flex;align-items:center;gap:10px}
 .chitem:hover{background:var(--bg3)}
 .chitem.sel{background:var(--bg4);border-left:2px solid var(--green)}
 .chit{font-size:0.8rem;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.chilv{font-size:0.65rem;font-weight:700;margin-top:2px}
+.chilv{font-size:0.63rem;font-weight:700;margin-top:2px}
 .chmain{display:flex;flex-direction:column;overflow:hidden}
-.chda{padding:1.5rem;border-bottom:1px solid var(--border);background:var(--bg2);flex-shrink:0}
-.chda h3{font-size:1rem;font-weight:700;margin-bottom:6px}
+.chda{padding:1.4rem 1.5rem;border-bottom:1px solid var(--border);background:var(--bg2);flex-shrink:0}
+.chda h3{font-size:1rem;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:8px}
 .chda p{font-size:0.82rem;color:var(--text2);line-height:1.65;margin-bottom:10px}
 .chtags{display:flex;gap:6px;flex-wrap:wrap}
 .chtag{font-size:0.65rem;font-weight:700;padding:3px 9px;border-radius:20px;font-family:var(--mono);background:var(--bg4);border:1px solid var(--border2);color:var(--text2)}
@@ -161,7 +165,7 @@ textarea.ched{flex:1;background:var(--bg);color:var(--text);font-family:var(--mo
     <button class="htab" onclick="sw(&#39;challenges&#39;)">Desafios</button>
   </div>
   <div class="progress-pill">
-    <span id="hprog">0/10</span>
+    <span id="hprog">0/13</span>
     <div class="pill-bar"><div class="pill-fill" id="hfill" style="width:0%"></div></div>
   </div>
 </header>
@@ -181,14 +185,14 @@ textarea.ched{flex:1;background:var(--bg);color:var(--text);font-family:var(--mo
       </div>
       <div>
         <div class="stitle">Exemplos rápidos</div>
-        <button class="qbtn" onclick="setQ(&#39;SELECT * FROM produtos\nWHERE preco &gt; 100\nORDER BY preco DESC&#39;)"><span class="qtag">WHERE + ORDER BY</span>produtos acima de R$100</button>
+        <button class="qbtn" onclick="setQ(&#39;SELECT nome, preco FROM produtos\nORDER BY preco DESC&#39;)"><span class="qtag">SELECT + ORDER BY</span>colunas específicas ordenadas</button>
+        <button class="qbtn" onclick="setQ(&#39;SELECT * FROM produtos\nWHERE preco &gt; 100\nORDER BY preco DESC&#39;)"><span class="qtag">WHERE</span>filtrar por preço</button>
         <button class="qbtn" onclick="setQ(&#39;SELECT p.nome, c.nome_categoria\nFROM produtos p\nINNER JOIN categorias c\n  ON p.id_categoria = c.id_categoria&#39;)"><span class="qtag">INNER JOIN</span>produto + categoria</button>
+        <button class="qbtn" onclick="setQ(&#39;SELECT cl.nome, pe.id_pedido, pe.total\nFROM clientes cl\nLEFT JOIN pedidos pe\n  ON cl.id_cliente = pe.id_cliente&#39;)"><span class="qtag">LEFT JOIN</span>clientes com e sem pedidos</button>
+        <button class="qbtn" onclick="setQ(&#39;SELECT cidade, COUNT(*) AS total\nFROM clientes\nGROUP BY cidade\nORDER BY total DESC&#39;)"><span class="qtag">GROUP BY</span>clientes por cidade</button>
+        <button class="qbtn" onclick="setQ(&#39;SELECT * FROM pedidos\nWHERE data_pedido BETWEEN \&#39;2024-01-01\&#39; AND \&#39;2024-03-31\&#39;&#39;)"><span class="qtag">BETWEEN (datas)</span>pedidos no 1º trimestre</button>
+        <button class="qbtn" onclick="setQ(&#39;SELECT * FROM pedidos\nWHERE status IN (\&#39;entregue\&#39;, \&#39;em andamento\&#39;)&#39;)"><span class="qtag">IN</span>pedidos por status</button>
         <button class="qbtn" onclick="setQ(&#39;SELECT cl.nome,\n  COUNT(pe.id_pedido) AS pedidos,\n  SUM(pe.total) AS gasto\nFROM clientes cl\nLEFT JOIN pedidos pe\n  ON cl.id_cliente = pe.id_cliente\nGROUP BY cl.id_cliente, cl.nome\nORDER BY gasto DESC&#39;)"><span class="qtag">LEFT JOIN + GROUP BY</span>gasto total por cliente</button>
-        <button class="qbtn" onclick="setQ(&#39;SELECT c.nome_categoria,\n  COUNT(p.id_produto) AS total,\n  AVG(p.preco) AS preco_medio\nFROM categorias c\nLEFT JOIN produtos p\n  ON c.id_categoria = p.id_categoria\nGROUP BY c.id_categoria, c.nome_categoria\nHAVING COUNT(p.id_produto) &gt; 1\nORDER BY total DESC&#39;)"><span class="qtag">GROUP BY + HAVING</span>categorias com +1 produto</button>
-        <button class="qbtn" onclick="setQ(&#39;SELECT nome, preco\nFROM produtos\nWHERE preco &gt; (\n  SELECT AVG(preco) FROM produtos\n)\nORDER BY preco DESC&#39;)"><span class="qtag">SUBQUERY</span>acima da média de preço</button>
-        <button class="qbtn" onclick="setQ(&#39;SELECT p.nome,\n  CASE\n    WHEN p.preco &lt; 50 THEN \&#39;barato\&#39;\n    WHEN p.preco &lt; 300 THEN \&#39;médio\&#39;\n    ELSE \&#39;premium\&#39;\n  END AS faixa\nFROM produtos p\nORDER BY p.preco&#39;)"><span class="qtag">CASE WHEN</span>classificar por faixa de preço</button>
-        <button class="qbtn" onclick="setQ(&#39;SELECT p.nome, SUM(ip.quantidade) AS vendidos\nFROM produtos p\nINNER JOIN itens_pedido ip\n  ON p.id_produto = ip.id_produto\nGROUP BY p.id_produto, p.nome\nORDER BY vendidos DESC\nLIMIT 5&#39;)"><span class="qtag">RANKING + LIMIT</span>top 5 mais vendidos</button>
-        <button class="qbtn" onclick="setQ(&#39;SELECT MIN(preco) AS minimo, MAX(preco) AS maximo,\n  AVG(preco) AS media, COUNT(*) AS total\nFROM produtos&#39;)"><span class="qtag">AGREGAÇÕES</span>estatísticas de preço</button>
       </div>
     </aside>
     <div class="editor-top">
@@ -246,14 +250,21 @@ textarea.ched{flex:1;background:var(--bg);color:var(--text);font-family:var(--mo
 <div class="panel" id="panel-challenges">
   <div class="chlayout">
     <div class="chsb">
-      <div class="chsbh"><h2>Desafios</h2><p id="chtxt">0 de 10 concluídos</p><div class="chpb"><div class="chpf" id="chpf" style="width:0%"></div></div></div>
-      <div id="chlist"><div class="chitem" id="chi-1"><span style="font-size:1rem;flex-shrink:0">⬜</span><div style="flex:1;min-width:0"><div class="chit">1. Liste todos os produtos</div><div class="chilv" style="color:#4ade80">Iniciante</div></div></div><div class="chitem" id="chi-2"><span style="font-size:1rem;flex-shrink:0">⬜</span><div style="flex:1;min-width:0"><div class="chit">2. Produtos acima de R$ 100</div><div class="chilv" style="color:#4ade80">Iniciante</div></div></div><div class="chitem" id="chi-3"><span style="font-size:1rem;flex-shrink:0">⬜</span><div style="flex:1;min-width:0"><div class="chit">3. Clientes por cidade</div><div class="chilv" style="color:#4ade80">Iniciante</div></div></div><div class="chitem" id="chi-4"><span style="font-size:1rem;flex-shrink:0">⬜</span><div style="flex:1;min-width:0"><div class="chit">4. Produto com sua categoria</div><div class="chilv" style="color:#fbbf24">Intermediário</div></div></div><div class="chitem" id="chi-5"><span style="font-size:1rem;flex-shrink:0">⬜</span><div style="flex:1;min-width:0"><div class="chit">5. Clientes sem pedidos (LEFT JOIN)</div><div class="chilv" style="color:#fbbf24">Intermediário</div></div></div><div class="chitem" id="chi-6"><span style="font-size:1rem;flex-shrink:0">⬜</span><div style="flex:1;min-width:0"><div class="chit">6. Categorias com mais de 2 produtos</div><div class="chilv" style="color:#fbbf24">Intermediário</div></div></div><div class="chitem" id="chi-7"><span style="font-size:1rem;flex-shrink:0">⬜</span><div style="flex:1;min-width:0"><div class="chit">7. Produtos mais caros que a média</div><div class="chilv" style="color:#a78bfa">Avançado</div></div></div><div class="chitem" id="chi-8"><span style="font-size:1rem;flex-shrink:0">⬜</span><div style="flex:1;min-width:0"><div class="chit">8. Relatório de vendas por cliente</div><div class="chilv" style="color:#a78bfa">Avançado</div></div></div><div class="chitem" id="chi-9"><span style="font-size:1rem;flex-shrink:0">⬜</span><div style="flex:1;min-width:0"><div class="chit">9. Top 3 produtos mais vendidos</div><div class="chilv" style="color:#a78bfa">Avançado</div></div></div><div class="chitem" id="chi-10"><span style="font-size:1rem;flex-shrink:0">⬜</span><div style="flex:1;min-width:0"><div class="chit">10. Ticket médio por categoria</div><div class="chilv" style="color:#f87272">Expert</div></div></div></div>
+      <div class="chsbh">
+        <h2>Desafios</h2>
+        <p id="chtxt">0 de 9 obrigatórios concluídos</p>
+        <div class="chpb"><div class="chpf" id="chpf" style="width:0%"></div></div>
+      </div>
+      <div id="chlist"><div class="ch-section-hdr">Obrigatórios <span class="sec-badge" style="background:rgba(74,222,128,0.15);color:#4ade80">9 desafios</span></div><div class="chitem" id="chi-1"><span style="font-size:1rem;flex-shrink:0">⬜</span><div style="flex:1;min-width:0"><div class="chit">1. Selecione colunas específicas</div><div class="chilv" style="color:#4ade80">Básico</div></div></div><div class="chitem" id="chi-2"><span style="font-size:1rem;flex-shrink:0">⬜</span><div style="flex:1;min-width:0"><div class="chit">2. Filtre com WHERE</div><div class="chilv" style="color:#4ade80">Básico</div></div></div><div class="chitem" id="chi-3"><span style="font-size:1rem;flex-shrink:0">⬜</span><div style="flex:1;min-width:0"><div class="chit">3. Ordene os resultados</div><div class="chilv" style="color:#4ade80">Básico</div></div></div><div class="chitem" id="chi-4"><span style="font-size:1rem;flex-shrink:0">⬜</span><div style="flex:1;min-width:0"><div class="chit">4. IN e NOT IN</div><div class="chilv" style="color:#4ade80">Básico</div></div></div><div class="chitem" id="chi-5"><span style="font-size:1rem;flex-shrink:0">⬜</span><div style="flex:1;min-width:0"><div class="chit">5. Filtro de datas com BETWEEN</div><div class="chilv" style="color:#4ade80">Básico</div></div></div><div class="chitem" id="chi-6"><span style="font-size:1rem;flex-shrink:0">⬜</span><div style="flex:1;min-width:0"><div class="chit">6. INNER JOIN — produto e categoria</div><div class="chilv" style="color:#fbbf24">Intermediário</div></div></div><div class="chitem" id="chi-7"><span style="font-size:1rem;flex-shrink:0">⬜</span><div style="flex:1;min-width:0"><div class="chit">7. LEFT JOIN — clientes com ou sem pedidos</div><div class="chilv" style="color:#fbbf24">Intermediário</div></div></div><div class="chitem" id="chi-8"><span style="font-size:1rem;flex-shrink:0">⬜</span><div style="flex:1;min-width:0"><div class="chit">8. GROUP BY — resumo por cidade</div><div class="chilv" style="color:#fbbf24">Intermediário</div></div></div><div class="chitem" id="chi-9"><span style="font-size:1rem;flex-shrink:0">⬜</span><div style="flex:1;min-width:0"><div class="chit">9. Combinando tudo — relatório de vendas</div><div class="chilv" style="color:#fbbf24">Intermediário</div></div></div><div class="ch-section-hdr">Aprofundamento <span class="sec-badge" style="background:rgba(167,139,250,0.15);color:#a78bfa">opcional</span></div><div class="chitem" id="chi-10"><span style="font-size:1rem;flex-shrink:0">⬜</span><div style="flex:1;min-width:0"><div class="chit">10. RIGHT JOIN — todas as categorias</div><div class="chilv" style="color:#a78bfa">Avançado</div></div></div><div class="chitem" id="chi-11"><span style="font-size:1rem;flex-shrink:0">⬜</span><div style="flex:1;min-width:0"><div class="chit">11. HAVING — filtrar grupos</div><div class="chilv" style="color:#a78bfa">Avançado</div></div></div><div class="chitem" id="chi-12"><span style="font-size:1rem;flex-shrink:0">⬜</span><div style="flex:1;min-width:0"><div class="chit">12. Subquery — acima da média</div><div class="chilv" style="color:#a78bfa">Avançado</div></div></div><div class="chitem" id="chi-13"><span style="font-size:1rem;flex-shrink:0">⬜</span><div style="flex:1;min-width:0"><div class="chit">13. Múltiplos JOINs — ticket médio por categoria</div><div class="chilv" style="color:#f87272">Expert</div></div></div></div>
     </div>
-    <div class="chmain" id="chmain"><div class="noch"><div style="font-size:2.5rem;opacity:0.2">🎯</div><span>Selecione um desafio para começar</span></div></div>
+    <div class="chmain" id="chmain">
+      <div class="noch"><div style="font-size:2.5rem;opacity:0.2">🎯</div><span>Selecione um desafio para começar</span></div>
+    </div>
   </div>
 </div>
 
-</div>
+</div><!-- /main -->
+
 <script>
 // ── DATABASE ──────────────────────────────────────────────────────────────
 var DB={
@@ -292,110 +303,56 @@ function sqlEngine(sql){
   var rows=parseFrom(fromStr);
   if(whereExpr) rows=rows.filter(function(r){return evalCond(whereExpr,r);});
   var hasAgg=/\b(COUNT|SUM|AVG|MIN|MAX)\s*\(/i.test(selStr);
-  if(grpCols.length>0||hasAgg){
-    rows=doGroupBy(rows,grpCols,selStr);
-    if(havExpr) rows=rows.filter(function(r){return evalCond(havExpr,r);});
-    rows=rows.map(function(r){return projectRow(selStr,r);});
-  } else {
-    rows=rows.map(function(r){return projectRow(selStr,r);});
-  }
-  if(orderCols.length){
-    rows.sort(function(a,b){
-      for(var i=0;i<orderCols.length;i++){
-        var c=orderCols[i],d=orderDirs[i];
-        var va=findV(a,c),vb=findV(b,c);
-        if(va==null) va=d==='ASC'?Infinity:-Infinity;
-        if(vb==null) vb=d==='ASC'?Infinity:-Infinity;
-        var cmp=va<vb?-1:va>vb?1:0;
-        if(cmp) return d==='DESC'?-cmp:cmp;
-      }return 0;
-    });
-  }
-  if(limitN!==null) rows=rows.slice(offsetN,offsetN+limitN);
+  if(grpCols.length>0||hasAgg){rows=doGroupBy(rows,grpCols,selStr);if(havExpr)rows=rows.filter(function(r){return evalCond(havExpr,r);});rows=rows.map(function(r){return projectRow(selStr,r);});}
+  else{rows=rows.map(function(r){return projectRow(selStr,r);});}
+  if(orderCols.length){rows.sort(function(a,b){for(var i=0;i<orderCols.length;i++){var c=orderCols[i],d=orderDirs[i];var va=findV(a,c),vb=findV(b,c);if(va==null)va=d==='ASC'?Infinity:-Infinity;if(vb==null)vb=d==='ASC'?Infinity:-Infinity;var cmp=va<vb?-1:va>vb?1:0;if(cmp)return d==='DESC'?-cmp:cmp;}return 0;});}
+  if(limitN!==null)rows=rows.slice(offsetN,offsetN+limitN);
   return rows;
 }
-function findV(obj,col){
-  if(obj==null) return undefined;
-  if(obj.hasOwnProperty(col)) return obj[col];
-  var lo=col.toLowerCase();
-  for(var k in obj) if(k.toLowerCase()===lo||k.toLowerCase().split('.').pop()===lo) return obj[k];
-  return undefined;
-}
+function findV(obj,col){if(obj==null)return undefined;if(obj.hasOwnProperty(col))return obj[col];var lo=col.toLowerCase();for(var k in obj)if(k.toLowerCase()===lo||k.toLowerCase().split('.').pop()===lo)return obj[k];return undefined;}
 function parseFrom(fs){
   var bm=fs.match(/^(\w+)(?:\s+(?:AS\s+)?(\w+))?/i);
-  if(!bm) throw new Error('Tabela não encontrada.');
+  if(!bm)throw new Error('Tabela não encontrada.');
   var bn=bm[1],ba=bm[2]||bm[1];
-  if(!DB[bn]) throw new Error('Tabela desconhecida: '+bn);
+  if(!DB[bn])throw new Error('Tabela desconhecida: '+bn);
   var rows=DB[bn].map(function(r){var o={};for(var k in r)o[ba+'.'+k]=r[k];return o;});
   var jp=fs.slice(bm[0].length).trim();
   var jrx=/(INNER\s+JOIN|LEFT\s+(?:OUTER\s+)?JOIN|RIGHT\s+JOIN|JOIN)\s+(\w+)(?:\s+(?:AS\s+)?(\w+))?\s+ON\s+(.+?)(?=\s+(?:INNER|LEFT|RIGHT|JOIN)\b|$)/gi,jm;
-  while((jm=jrx.exec(jp))!==null){
-    var jt=jm[2],ja=jm[3]||jm[2],jon=jm[4].trim(),isL=/LEFT/i.test(jm[1]);
-    if(!DB[jt]) throw new Error('Tabela desconhecida: '+jt);
-    rows=doJoin(rows,DB[jt],ja,jon,isL);
-  }
+  while((jm=jrx.exec(jp))!==null){var jt=jm[2],ja=jm[3]||jm[2],jon=jm[4].trim(),isL=/LEFT/i.test(jm[1]);if(!DB[jt])throw new Error('Tabela desconhecida: '+jt);rows=doJoin(rows,DB[jt],ja,jon,isL);}
   return rows;
 }
 function doJoin(left,rt,ra,on,isLeft){
   var res=[];
-  left.forEach(function(lr){
-    var matched=false;
-    rt.forEach(function(rr){
-      var rrow={};for(var k in rr)rrow[ra+'.'+k]=rr[k];
-      var c=Object.assign({},lr,rrow);
-      if(evalCond(on,c)){matched=true;res.push(c);}
-    });
-    if(isLeft&&!matched){var nr={};if(rt[0])for(var k in rt[0])nr[ra+'.'+k]=null;res.push(Object.assign({},lr,nr));}
-  });
+  left.forEach(function(lr){var matched=false;rt.forEach(function(rr){var rrow={};for(var k in rr)rrow[ra+'.'+k]=rr[k];var c=Object.assign({},lr,rrow);if(evalCond(on,c)){matched=true;res.push(c);}});if(isLeft&&!matched){var nr={};if(rt[0])for(var k in rt[0])nr[ra+'.'+k]=null;res.push(Object.assign({},lr,nr));}});
   return res;
 }
-function splitOuter(expr,sep){
-  var parts=[],depth=0,cur='',i=0,sl=sep.toLowerCase(),el=expr.toLowerCase();
-  while(i<expr.length){
-    var c=expr[i];
-    if(c==='(')depth++;else if(c===')')depth--;
-    else if(!depth&&el.slice(i,i+sl.length)===sl){parts.push(cur);cur='';i+=sl.length;continue;}
-    cur+=c;i++;
-  }
-  parts.push(cur);
-  return parts.length>1?parts:[expr];
-}
+function splitOuter(expr,sep){var parts=[],depth=0,cur='',i=0,sl=sep.toLowerCase(),el=expr.toLowerCase();while(i<expr.length){var c=expr[i];if(c==='(')depth++;else if(c===')')depth--;else if(!depth&&el.slice(i,i+sl.length)===sl){parts.push(cur);cur='';i+=sl.length;continue;}cur+=c;i++;}parts.push(cur);return parts.length>1?parts:[expr];}
 function resolveVal(s,row){
   s=s.trim();
-  if(/^'.*'$/.test(s)) return s.slice(1,-1);
-  if(/^".*"$/.test(s)) return s.slice(1,-1);
-  if(/^-?\d+(\.\d+)?$/.test(s)) return parseFloat(s);
-  if(/^NULL$/i.test(s)) return null;
+  if(/^'.*'$/.test(s))return s.slice(1,-1);
+  if(/^".*"$/.test(s))return s.slice(1,-1);
+  if(/^-?\d+(\.\d+)?$/.test(s))return parseFloat(s);
+  if(/^NULL$/i.test(s))return null;
   if(/^\(SELECT\b/i.test(s)){try{var r=sqlEngine(s.slice(1,-1));return r.length?Object.values(r[0])[0]:null;}catch(e){return null;}}
-  if(/[\+\-\*\/]/.test(s)&&!/^\w+\s*\(/.test(s)){
-    try{var ex2=s.replace(/(\w+\.\w+|\b[a-zA-Z_]\w*\b)/g,function(m){var v=findV(row,m.replace(/^\w+\./,''));return v!==undefined?JSON.stringify(v):m;});return Function('"use strict";return('+ex2+')')();}catch(e){}
-  }
-  var col=s.indexOf('.')>-1?s.split('.').pop():s;
-  return findV(row,col);
+  if(/[\+\-\*\/]/.test(s)&&!/^\w+\s*\(/.test(s)){try{var ex2=s.replace(/(\w+\.\w+|\b[a-zA-Z_]\w*\b)/g,function(m){var v=findV(row,m.replace(/^\w+\./,''));return v!==undefined?JSON.stringify(v):m;});return Function('"use strict";return('+ex2+')')();}catch(e){}}
+  var col=s.indexOf('.')>-1?s.split('.').pop():s;return findV(row,col);
 }
 function evalCond(expr,row){
   expr=expr.replace(/\(\s*SELECT[\s\S]+?\)/gi,function(sub){try{var r=sqlEngine(sub.slice(1,-1));if(r.length){var v=Object.values(r[0])[0];return typeof v==='string'?"'"+v+"'":String(v);}return 'NULL';}catch(e){return 'NULL';}});
-  var or=splitOuter(expr,' OR ');
-  if(or.length>1) return or.some(function(p){return evalCond(p.trim(),row);});
-  var and=splitOuter(expr,' AND ');
-  if(and.length>1) return and.every(function(p){return evalCond(p.trim(),row);});
-  if(/^NOT\s+/i.test(expr)) return !evalCond(expr.replace(/^NOT\s+/i,''),row);
+  var or=splitOuter(expr,' OR ');if(or.length>1)return or.some(function(p){return evalCond(p.trim(),row);});
+  var and=splitOuter(expr,' AND ');if(and.length>1)return and.every(function(p){return evalCond(p.trim(),row);});
+  if(/^NOT\s+/i.test(expr))return !evalCond(expr.replace(/^NOT\s+/i,''),row);
   if(/^\(/.test(expr)&&/\)$/.test(expr)){var inn=expr.slice(1,-1);var d=0,ok=true;for(var i=0;i<inn.length;i++){if(inn[i]==='(')d++;if(inn[i]===')')d--;if(d<0){ok=false;break;}}if(ok&&d===0)return evalCond(inn.trim(),row);}
   var inm=expr.match(/^(.+?)\s+(NOT\s+)?IN\s*\((.+)\)\s*$/i);
   if(inm){var lv=resolveVal(inm[1],row);var items=splitOuter(inm[3],',').map(function(x){return resolveVal(x.trim(),row);});var found=items.some(function(i){return leq(lv,i);});return inm[2]?!found:found;}
   var lkm=expr.match(/^(.+?)\s+(NOT\s+)?LIKE\s+(.+)\s*$/i);
   if(lkm){var lv=resolveVal(lkm[1],row),pat=resolveVal(lkm[3],row);var rx=new RegExp('^'+String(pat).replace(/%/g,'.*').replace(/_/g,'.')+'$','i');var res=rx.test(String(lv||''));return lkm[2]?!res:res;}
   var btm=expr.match(/^(.+?)\s+BETWEEN\s+(.+?)\s+AND\s+(.+)\s*$/i);
-  if(btm){var v=resolveVal(btm[1],row),lo=resolveVal(btm[2],row),hi=resolveVal(btm[3],row);return v>=lo&&v<=hi;}
+  if(btm){var v=resolveVal(btm[1],row),lo=resolveVal(btm[2],row),hi=resolveVal(btm[3],row);return String(v)>=String(lo)&&String(v)<=String(hi);}
   var inullm=expr.match(/^(.+?)\s+IS\s+(NOT\s+)?NULL\s*$/i);
   if(inullm){var v=resolveVal(inullm[1],row);return inullm[2]?v!=null:v==null;}
   var cm=expr.match(/^(.+?)\s*(!=|<>|<=|>=|=|<|>)\s*(.+)$/);
-  if(cm){var lv=resolveVal(cm[1],row),op=cm[2],rv=resolveVal(cm[3],row);
-    if(op==='='||op==='==') return leq(lv,rv);
-    if(op==='!='||op==='<>') return !leq(lv,rv);
-    if(op==='<') return lv<rv;if(op==='>') return lv>rv;
-    if(op==='<=') return lv<=rv;if(op==='>=') return lv>=rv;
-  }
+  if(cm){var lv=resolveVal(cm[1],row),op=cm[2],rv=resolveVal(cm[3],row);if(op==='='||op==='==')return leq(lv,rv);if(op==='!='||op==='<>')return !leq(lv,rv);if(op==='<')return lv<rv;if(op==='>') return lv>rv;if(op==='<=')return lv<=rv;if(op==='>=')return lv>=rv;}
   return false;
 }
 function leq(a,b){if(a==null||b==null)return a===b;return String(a).toLowerCase()===String(b).toLowerCase()||Number(a)===Number(b);}
@@ -403,178 +360,228 @@ function splitSel(s){var p=[],d=0,c='';for(var i=0;i<s.length;i++){var ch=s[i];i
 function projectRow(selStr,row){
   if(selStr.trim()==='*'){var o={};for(var k in row){var c=k.split('.').pop();o[c]=row[k];}return o;}
   var cols=splitSel(selStr),out={};
-  cols.forEach(function(col){
-    col=col.trim();
-    var am=col.match(/^([\s\S]+?)\s+AS\s+(\w+)\s*$/i);
-    var alias=am?am[2]:null,expr=am?am[1].trim():col;
-    if(expr==='*'){for(var k in row){var c=k.split('.').pop();out[c]=row[k];}return;}
-    var val,aggm=expr.match(/^(COUNT|SUM|AVG|MIN|MAX)\s*\(\s*(DISTINCT\s+)?(.+?)\s*\)\s*$/i);
-    if(aggm){var fn=aggm[1].toUpperCase(),inner=aggm[3].trim(),key=fn+'('+inner+')';val=row.hasOwnProperty(key)?row[key]:(row[fn+'(DISTINCT '+inner+')']||0);}
-    else {var casem=expr.match(/^CASE\b([\s\S]+?)\bEND\s*$/i);val=casem?evalCase(casem[1],row):resolveVal(expr,row);}
-    out[alias||(expr.replace(/^\w+\./,'').replace(/[()]/g,'').replace(/\s+/g,'_').slice(0,30))]=val;
-  });
+  cols.forEach(function(col){col=col.trim();var am=col.match(/^([\s\S]+?)\s+AS\s+(\w+)\s*$/i);var alias=am?am[2]:null,expr=am?am[1].trim():col;if(expr==='*'){for(var k in row){var c=k.split('.').pop();out[c]=row[k];}return;}var val,aggm=expr.match(/^(COUNT|SUM|AVG|MIN|MAX)\s*\(\s*(DISTINCT\s+)?(.+?)\s*\)\s*$/i);if(aggm){var fn=aggm[1].toUpperCase(),inner=aggm[3].trim(),key=fn+'('+inner+')';val=row.hasOwnProperty(key)?row[key]:(row[fn+'(DISTINCT '+inner+')']||0);}else{var casem=expr.match(/^CASE\b([\s\S]+?)\bEND\s*$/i);val=casem?evalCase(casem[1],row):resolveVal(expr,row);}out[alias||(expr.replace(/^\w+\./,'').replace(/[()]/g,'').replace(/\s+/g,'_').slice(0,30))]=val;});
   return out;
 }
-function evalCase(body,row){
-  var em=body.match(/\bELSE\s+(.+?)\s*$/i),ev=em?resolveVal(em[1],row):null;
-  var parts=em?body.slice(0,body.lastIndexOf(em[0])):body;
-  var rx=/WHEN\s+(.*?)\s+THEN\s+(.*?)(?=\s+WHEN\b|\s*$)/gi,m;
-  while((m=rx.exec(parts))!==null){if(evalCond(m[1].trim(),row))return resolveVal(m[2].trim(),row);}
-  return ev;
-}
-function extractAgg(selStr){
-  var res=[],rx=/\b(COUNT|SUM|AVG|MIN|MAX)\s*\(\s*(DISTINCT\s+)?(.+?)\s*\)/gi,m;
-  while((m=rx.exec(selStr))!==null)res.push({fn:m[1].toUpperCase(),dist:!!m[2],inner:m[3].trim()});
-  return res;
-}
+function evalCase(body,row){var em=body.match(/\bELSE\s+(.+?)\s*$/i),ev=em?resolveVal(em[1],row):null;var parts=em?body.slice(0,body.lastIndexOf(em[0])):body;var rx=/WHEN\s+(.*?)\s+THEN\s+(.*?)(?=\s+WHEN\b|\s*$)/gi,m;while((m=rx.exec(parts))!==null){if(evalCond(m[1].trim(),row))return resolveVal(m[2].trim(),row);}return ev;}
+function extractAgg(selStr){var res=[],rx=/\b(COUNT|SUM|AVG|MIN|MAX)\s*\(\s*(DISTINCT\s+)?(.+?)\s*\)/gi,m;while((m=rx.exec(selStr))!==null)res.push({fn:m[1].toUpperCase(),dist:!!m[2],inner:m[3].trim()});return res;}
 function doGroupBy(rows,grpCols,selStr){
-  var groups={},order=[];
-  var aggs=extractAgg(selStr);
-  rows.forEach(function(row){
-    var key=grpCols.length?grpCols.map(function(c){return String(findV(row,c));}).join('|'):'__all__';
-    if(!groups[key]){groups[key]={__r:[],__k:key};order.push(key);grpCols.forEach(function(c){groups[key][c]=findV(row,c);});}
-    groups[key].__r.push(row);
-  });
-  return order.map(function(key){
-    var g=groups[key],gr=g.__r,out={};
-    Object.assign(out,g);delete out.__r;delete out.__k;
-    if(gr[0])Object.keys(gr[0]).forEach(function(k){out[k]=gr[0][k];});
-    aggs.forEach(function(ae){
-      var vals=gr.map(function(r){return findV(r,ae.inner);});
-      if(ae.dist)vals=vals.filter(function(v,i,a){return a.indexOf(v)===i;});
-      var res;
-      switch(ae.fn){
-        case 'COUNT':res=ae.inner==='*'?gr.length:vals.filter(function(v){return v!=null;}).length;break;
-        case 'SUM':res=vals.reduce(function(a,b){return a+(+b||0);},0);break;
-        case 'AVG':var nv=vals.filter(function(v){return v!=null;});res=nv.length?nv.reduce(function(a,b){return a+(+b||0);},0)/nv.length:null;break;
-        case 'MIN':res=Math.min.apply(null,vals.filter(function(v){return v!=null;}));break;
-        case 'MAX':res=Math.max.apply(null,vals.filter(function(v){return v!=null;}));break;
-      }
-      out[ae.fn+'('+ae.inner+')']=res;
-    });
-    return out;
-  });
+  var groups={},order=[],aggs=extractAgg(selStr);
+  rows.forEach(function(row){var key=grpCols.length?grpCols.map(function(c){return String(findV(row,c));}).join('|'):'__all__';if(!groups[key]){groups[key]={__r:[],__k:key};order.push(key);grpCols.forEach(function(c){groups[key][c]=findV(row,c);});}groups[key].__r.push(row);});
+  return order.map(function(key){var g=groups[key],gr=g.__r,out={};Object.assign(out,g);delete out.__r;delete out.__k;if(gr[0])Object.keys(gr[0]).forEach(function(k){out[k]=gr[0][k];});aggs.forEach(function(ae){var vals=gr.map(function(r){return findV(r,ae.inner);});if(ae.dist)vals=vals.filter(function(v,i,a){return a.indexOf(v)===i;});var res;switch(ae.fn){case 'COUNT':res=ae.inner==='*'?gr.length:vals.filter(function(v){return v!=null;}).length;break;case 'SUM':res=vals.reduce(function(a,b){return a+(+b||0);},0);break;case 'AVG':var nv=vals.filter(function(v){return v!=null;});res=nv.length?nv.reduce(function(a,b){return a+(+b||0);},0)/nv.length:null;break;case 'MIN':res=Math.min.apply(null,vals.filter(function(v){return v!=null;}));break;case 'MAX':res=Math.max.apply(null,vals.filter(function(v){return v!=null;}));break;}out[ae.fn+'('+ae.inner+')']=res;});return out;});
 }
 
 // ── UI ────────────────────────────────────────────────────────────────────
 var solved={};
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-function fmtV(v,col){
-  if(v==null) return '<span class="null-v">NULL</span>';
-  if(typeof v==='number')return '<span class="'+(col&&/^id_/i.test(col)?'nid':'nnum')+'">'+(Number.isInteger(v)?v:v.toFixed(2))+'</span>';
-  return '<span class="nstr">'+esc(String(v))+'</span>';
-}
-function buildTbl(rows,cls){
-  if(!rows||!rows.length) return '<div style="padding:1rem;color:var(--text3);font-size:0.8rem">Nenhum resultado.</div>';
-  var cols=Object.keys(rows[0]),h='<table class="'+(cls||'rtbl')+'"><thead><tr>';
-  cols.forEach(function(c){h+='<th>'+esc(c)+'</th>';});
-  h+='</tr></thead><tbody>';
-  rows.forEach(function(row){h+='<tr>';cols.forEach(function(c){h+='<td>'+fmtV(row[c],c)+'</td>';});h+='</tr>';});
-  return h+'</tbody></table>';
-}
-function sw(name){
-  document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('active');});
-  document.getElementById('panel-'+name).classList.add('active');
-  ['editor','data','schema','challenges'].forEach(function(n,i){document.querySelectorAll('.htab')[i].classList.toggle('active',n===name);});
-}
+function fmtV(v,col){if(v==null)return '<span class="null-v">NULL</span>';if(typeof v==='number')return '<span class="'+(col&&/^id_/i.test(col)?'nid':'nnum')+'">'+(Number.isInteger(v)?v:v.toFixed(2))+'</span>';return '<span class="nstr">'+esc(String(v))+'</span>';}
+function buildTbl(rows,cls){if(!rows||!rows.length)return '<div style="padding:1rem;color:var(--text3);font-size:0.8rem">Nenhum resultado.</div>';var cols=Object.keys(rows[0]),h='<table class="'+(cls||'rtbl')+'"><thead><tr>';cols.forEach(function(c){h+='<th>'+esc(c)+'</th>';});h+='</tr></thead><tbody>';rows.forEach(function(row){h+='<tr>';cols.forEach(function(c){h+='<td>'+fmtV(row[c],c)+'</td>';});h+='</tr>';});return h+'</tbody></table>';}
+function sw(name){document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('active');});document.getElementById('panel-'+name).classList.add('active');['editor','data','schema','challenges'].forEach(function(n,i){document.querySelectorAll('.htab')[i].classList.toggle('active',n===name);});}
 function setQ(q){document.getElementById('sqled').value=q;runQ();sw('editor');}
 function runQ(){
-  var sql=document.getElementById('sqled').value.trim();
-  if(!sql)return;
+  var sql=document.getElementById('sqled').value.trim();if(!sql)return;
   var badge=document.getElementById('rbadge'),content=document.getElementById('rcontent');
-  try{
-    var rows=sqlEngine(sql);
-    if(!rows||!rows.length){badge.innerHTML='<span class="rbadge ok">0 linhas</span>';content.innerHTML='<div style="padding:1rem;color:var(--text3);font-size:0.8rem">Nenhum resultado.</div>';return;}
-    badge.innerHTML='<span class="rbadge ok">'+rows.length+' linha'+(rows.length>1?'s':'')+'</span>';
-    content.innerHTML='<div class="fi">'+buildTbl(rows,'rtbl')+'</div>';
-  }catch(e){badge.innerHTML='<span class="rbadge err">Erro</span>';content.innerHTML='<div class="errmsg">'+esc(e.message)+'</div>';}
+  try{var rows=sqlEngine(sql);if(!rows||!rows.length){badge.innerHTML='<span class="rbadge ok">0 linhas</span>';content.innerHTML='<div style="padding:1rem;color:var(--text3);font-size:0.8rem">Nenhum resultado.</div>';return;}badge.innerHTML='<span class="rbadge ok">'+rows.length+' linha'+(rows.length>1?'s':'')+'</span>';content.innerHTML='<div class="fi">'+buildTbl(rows,'rtbl')+'</div>';}
+  catch(e){badge.innerHTML='<span class="rbadge err">Erro</span>';content.innerHTML='<div class="errmsg">'+esc(e.message)+'</div>';}
 }
-function showDT(name,btn){
-  document.querySelectorAll('.dtab').forEach(function(b){b.classList.remove('active');});
-  if(btn)btn.classList.add('active');
-  document.getElementById('dtdisp').innerHTML='<div class="fi">'+buildTbl(DB[name],'dttbl')+'</div>';
-}
+function showDT(name,btn){document.querySelectorAll('.dtab').forEach(function(b){b.classList.remove('active');});if(btn)btn.classList.add('active');document.getElementById('dtdisp').innerHTML='<div class="fi">'+buildTbl(DB[name],'dttbl')+'</div>';}
+
+// ── CHALLENGES ────────────────────────────────────────────────────────────
+// section: 'core' = obrigatório, 'extra' = aprofundamento
 var CH=[
-  {id:1,lv:'Iniciante',cl:'#4ade80',title:'Liste todos os produtos',desc:'Escreva uma query que retorne todas as colunas e todas as linhas da tabela produtos.',tags:['SELECT','FROM'],gab:'SELECT * FROM produtos',check:function(r){return r.length===12&&r[0].id_produto;}},
-  {id:2,lv:'Iniciante',cl:'#4ade80',title:'Produtos acima de R$ 100',desc:'Retorne o nome e o preço dos produtos que custam mais de R$ 100, ordenados do mais caro para o mais barato.',tags:['WHERE','ORDER BY'],gab:'SELECT nome, preco FROM produtos\nWHERE preco > 100\nORDER BY preco DESC',check:function(r){return r.length>0&&r.every(function(x){return x.preco>100;})&&r[0].preco>=r[r.length-1].preco;}},
-  {id:3,lv:'Iniciante',cl:'#4ade80',title:'Clientes por cidade',desc:'Mostre cada cidade e o número de clientes nela, ordenado da cidade com mais clientes para a com menos.',tags:['GROUP BY','COUNT','ORDER BY'],gab:'SELECT cidade, COUNT(*) AS total\nFROM clientes\nGROUP BY cidade\nORDER BY total DESC',check:function(r){return r.length>0&&r[0].cidade;}},
-  {id:4,lv:'Intermediário',cl:'#fbbf24',title:'Produto com sua categoria',desc:'Faça um JOIN entre produtos e categorias para mostrar o nome do produto e o nome da categoria de cada um.',tags:['INNER JOIN'],gab:'SELECT p.nome, c.nome_categoria\nFROM produtos p\nINNER JOIN categorias c ON p.id_categoria = c.id_categoria',check:function(r){return r.length===12&&r[0].nome&&r[0].nome_categoria;}},
-  {id:5,lv:'Intermediário',cl:'#fbbf24',title:'Clientes sem pedidos (LEFT JOIN)',desc:'Liste todos os clientes e o número de pedidos de cada um. Clientes sem pedidos devem aparecer com 0.',tags:['LEFT JOIN','COUNT','GROUP BY'],gab:'SELECT cl.nome, COUNT(pe.id_pedido) AS total_pedidos\nFROM clientes cl\nLEFT JOIN pedidos pe ON cl.id_cliente = pe.id_cliente\nGROUP BY cl.id_cliente, cl.nome\nORDER BY total_pedidos DESC',check:function(r){return r.length===7&&r[0].nome;}},
-  {id:6,lv:'Intermediário',cl:'#fbbf24',title:'Categorias com mais de 2 produtos',desc:'Mostre o nome das categorias que possuem mais de 2 produtos cadastrados, com a contagem.',tags:['JOIN','GROUP BY','HAVING'],gab:'SELECT c.nome_categoria, COUNT(p.id_produto) AS total\nFROM categorias c\nINNER JOIN produtos p ON c.id_categoria = p.id_categoria\nGROUP BY c.id_categoria, c.nome_categoria\nHAVING COUNT(p.id_produto) > 2',check:function(r){return r.length>0&&r.every(function(x){return x.total>2;});}},
-  {id:7,lv:'Avançado',cl:'#a78bfa',title:'Produtos mais caros que a média',desc:'Liste os produtos cujo preço está acima da média de todos os produtos. Use uma subquery no WHERE.',tags:['Subquery','WHERE','AVG'],gab:'SELECT nome, preco FROM produtos\nWHERE preco > (SELECT AVG(preco) FROM produtos)\nORDER BY preco DESC',check:function(r){return r.length>0&&r[0].preco>r[r.length-1].preco;}},
-  {id:8,lv:'Avançado',cl:'#a78bfa',title:'Relatório de vendas por cliente',desc:'Para cada cliente: nome, cidade, número de pedidos e total gasto. Inclua quem não tem pedidos. Ordene pelo maior gasto.',tags:['LEFT JOIN','GROUP BY','SUM','COUNT'],gab:'SELECT cl.nome, cl.cidade,\n  COUNT(pe.id_pedido) AS total_pedidos,\n  SUM(pe.total) AS gasto_total\nFROM clientes cl\nLEFT JOIN pedidos pe ON cl.id_cliente = pe.id_cliente\nGROUP BY cl.id_cliente, cl.nome, cl.cidade\nORDER BY gasto_total DESC',check:function(r){return r.length===7&&r[0].gasto_total!==undefined;}},
-  {id:9,lv:'Avançado',cl:'#a78bfa',title:'Top 3 produtos mais vendidos',desc:'Mostre os 3 produtos mais vendidos por quantidade total, com o nome e a soma das quantidades.',tags:['JOIN','GROUP BY','ORDER BY','LIMIT'],gab:'SELECT p.nome, SUM(ip.quantidade) AS total_vendido\nFROM produtos p\nINNER JOIN itens_pedido ip ON p.id_produto = ip.id_produto\nGROUP BY p.id_produto, p.nome\nORDER BY total_vendido DESC\nLIMIT 3',check:function(r){return r.length===3&&r[0].total_vendido!==undefined;}},
-  {id:10,lv:'Expert',cl:'#f87272',title:'Ticket médio por categoria',desc:'Calcule o ticket médio dos pedidos por categoria de produto, juntando 4 tabelas: pedidos, itens_pedido, produtos e categorias.',tags:['4 JOINs','AVG','GROUP BY'],gab:'SELECT c.nome_categoria,\n  AVG(pe.total) AS ticket_medio\nFROM pedidos pe\nINNER JOIN itens_pedido ip ON pe.id_pedido = ip.id_pedido\nINNER JOIN produtos p ON ip.id_produto = p.id_produto\nINNER JOIN categorias c ON p.id_categoria = c.id_categoria\nGROUP BY c.id_categoria, c.nome_categoria\nORDER BY ticket_medio DESC',check:function(r){return r.length>0&&r[0].nome_categoria;}}
+  // ── OBRIGATÓRIOS ──────────────────────────────────────────────────────
+  {id:1,sec:'core',lv:'Básico',cl:'#4ade80',
+   title:'Selecione colunas específicas',
+   desc:'Retorne apenas o nome e o preço de todos os produtos, renomeando "preco" para "valor". Ordene do mais barato para o mais caro.',
+   tags:['SELECT','AS (renomear)','ORDER BY'],
+   gab:'SELECT nome, preco AS valor\nFROM produtos\nORDER BY valor ASC',
+   check:function(r){return r.length===12&&r[0].hasOwnProperty('valor')&&r[0].hasOwnProperty('nome')&&r[0].valor<=r[r.length-1].valor;}},
+
+  {id:2,sec:'core',lv:'Básico',cl:'#4ade80',
+   title:'Filtre com WHERE',
+   desc:'Liste o nome e a cidade de todos os clientes que moram em "São Paulo".',
+   tags:['WHERE','SELECT'],
+   gab:'SELECT nome, cidade\nFROM clientes\nWHERE cidade = \'São Paulo\'',
+   check:function(r){return r.length>0&&r.every(function(x){return String(x.cidade).toLowerCase()==='são paulo';});}},
+
+  {id:3,sec:'core',lv:'Básico',cl:'#4ade80',
+   title:'Ordene os resultados',
+   desc:'Mostre o nome e o total de todos os pedidos, ordenados do maior para o menor total.',
+   tags:['ORDER BY DESC'],
+   gab:'SELECT id_pedido, total\nFROM pedidos\nORDER BY total DESC',
+   check:function(r){return r.length===8&&r[0].total>=r[r.length-1].total;}},
+
+  {id:4,sec:'core',lv:'Básico',cl:'#4ade80',
+   title:'IN e NOT IN',
+   desc:'Liste os pedidos com status "entregue" ou "em andamento" usando IN. Em seguida (numa query só), exclua os cancelados com NOT IN.',
+   tags:['IN','NOT IN'],
+   gab:'SELECT * FROM pedidos\nWHERE status IN (\'entregue\', \'em andamento\')\n\n-- ou equivalente com NOT IN:\nSELECT * FROM pedidos\nWHERE status NOT IN (\'cancelado\')',
+   check:function(r){return r.length>0&&r.every(function(x){return x.status!=='cancelado';});}},
+
+  {id:5,sec:'core',lv:'Básico',cl:'#4ade80',
+   title:'Filtro de datas com BETWEEN',
+   desc:'Retorne todos os pedidos realizados entre 01/01/2024 e 31/03/2024 (1º trimestre), mostrando id_pedido, data_pedido e total.',
+   tags:['BETWEEN','datas'],
+   gab:'SELECT id_pedido, data_pedido, total\nFROM pedidos\nWHERE data_pedido BETWEEN \'2024-01-01\' AND \'2024-03-31\'',
+   check:function(r){return r.length>0&&r.every(function(x){return x.data_pedido>='2024-01-01'&&x.data_pedido<='2024-03-31';});}},
+
+  {id:6,sec:'core',lv:'Intermediário',cl:'#fbbf24',
+   title:'INNER JOIN — produto e categoria',
+   desc:'Mostre o nome do produto e o nome da categoria de cada produto. Use INNER JOIN e renomeie as colunas para "produto" e "categoria".',
+   tags:['INNER JOIN','AS (renomear)'],
+   gab:'SELECT p.nome AS produto, c.nome_categoria AS categoria\nFROM produtos p\nINNER JOIN categorias c ON p.id_categoria = c.id_categoria',
+   check:function(r){return r.length===12&&r[0].hasOwnProperty('produto')&&r[0].hasOwnProperty('categoria');}},
+
+  {id:7,sec:'core',lv:'Intermediário',cl:'#fbbf24',
+   title:'LEFT JOIN — clientes com ou sem pedidos',
+   desc:'Liste todos os clientes e o total de pedidos de cada um. Clientes sem pedidos devem aparecer com 0. Renomeie a contagem para "qtd_pedidos".',
+   tags:['LEFT JOIN','COUNT','GROUP BY','AS (renomear)'],
+   gab:'SELECT cl.nome, COUNT(pe.id_pedido) AS qtd_pedidos\nFROM clientes cl\nLEFT JOIN pedidos pe ON cl.id_cliente = pe.id_cliente\nGROUP BY cl.id_cliente, cl.nome\nORDER BY qtd_pedidos DESC',
+   check:function(r){return r.length===7&&r[0].hasOwnProperty('qtd_pedidos');}},
+
+  {id:8,sec:'core',lv:'Intermediário',cl:'#fbbf24',
+   title:'GROUP BY — resumo por cidade',
+   desc:'Mostre cada cidade e o número de clientes nela. Renomeie a contagem para "total_clientes". Ordene da cidade com mais clientes para a com menos.',
+   tags:['GROUP BY','COUNT','ORDER BY','AS (renomear)'],
+   gab:'SELECT cidade, COUNT(*) AS total_clientes\nFROM clientes\nGROUP BY cidade\nORDER BY total_clientes DESC',
+   check:function(r){return r.length>0&&r[0].hasOwnProperty('total_clientes')&&r[0].total_clientes>=r[r.length-1].total_clientes;}},
+
+  {id:9,sec:'core',lv:'Intermediário',cl:'#fbbf24',
+   title:'Combinando tudo — relatório de vendas',
+   desc:'Para cada cliente: nome, cidade, quantidade de pedidos (como "qtd_pedidos") e soma total gasta (como "total_gasto"). Inclua clientes sem pedidos. Filtre apenas os que fizeram pelo menos 1 pedido. Ordene pelo maior gasto.',
+   tags:['LEFT JOIN','GROUP BY','HAVING','SUM','COUNT','AS'],
+   gab:'SELECT cl.nome, cl.cidade,\n  COUNT(pe.id_pedido) AS qtd_pedidos,\n  SUM(pe.total) AS total_gasto\nFROM clientes cl\nLEFT JOIN pedidos pe ON cl.id_cliente = pe.id_cliente\nGROUP BY cl.id_cliente, cl.nome, cl.cidade\nHAVING COUNT(pe.id_pedido) > 0\nORDER BY total_gasto DESC',
+   check:function(r){return r.length>0&&r[0].hasOwnProperty('total_gasto')&&r[0].hasOwnProperty('qtd_pedidos')&&r[0].total_gasto>=r[r.length-1].total_gasto;}},
+
+  // ── APROFUNDAMENTO (OPCIONAIS) ────────────────────────────────────────
+  {id:10,sec:'extra',lv:'Avançado',cl:'#a78bfa',
+   title:'RIGHT JOIN — todas as categorias',
+   desc:'Liste todas as categorias e a quantidade de produtos em cada uma. Mesmo categorias sem produtos devem aparecer. Use RIGHT JOIN.',
+   tags:['RIGHT JOIN','COUNT','GROUP BY'],
+   gab:'SELECT c.nome_categoria, COUNT(p.id_produto) AS total_produtos\nFROM produtos p\nRIGHT JOIN categorias c ON p.id_categoria = c.id_categoria\nGROUP BY c.id_categoria, c.nome_categoria\nORDER BY total_produtos DESC',
+   check:function(r){return r.length===5&&r[0].hasOwnProperty('total_produtos');}},
+
+  {id:11,sec:'extra',lv:'Avançado',cl:'#a78bfa',
+   title:'HAVING — filtrar grupos',
+   desc:'Mostre apenas as categorias que possuem mais de 2 produtos cadastrados, com a contagem.',
+   tags:['GROUP BY','HAVING','COUNT'],
+   gab:'SELECT c.nome_categoria, COUNT(p.id_produto) AS total\nFROM categorias c\nINNER JOIN produtos p ON c.id_categoria = p.id_categoria\nGROUP BY c.id_categoria, c.nome_categoria\nHAVING COUNT(p.id_produto) > 2\nORDER BY total DESC',
+   check:function(r){return r.length>0&&r.every(function(x){return x.total>2;});}},
+
+  {id:12,sec:'extra',lv:'Avançado',cl:'#a78bfa',
+   title:'Subquery — acima da média',
+   desc:'Liste nome e preço dos produtos cujo preço está acima da média de todos os produtos. Use uma subquery no WHERE.',
+   tags:['Subquery','AVG','WHERE'],
+   gab:'SELECT nome, preco\nFROM produtos\nWHERE preco > (SELECT AVG(preco) FROM produtos)\nORDER BY preco DESC',
+   check:function(r){return r.length>0&&r[0].preco>r[r.length-1].preco;}},
+
+  {id:13,sec:'extra',lv:'Expert',cl:'#f87272',
+   title:'Múltiplos JOINs — ticket médio por categoria',
+   desc:'Calcule o ticket médio dos pedidos por categoria de produto, juntando 4 tabelas: pedidos, itens_pedido, produtos e categorias. Ordene pelo maior ticket médio.',
+   tags:['4 JOINs','AVG','GROUP BY'],
+   gab:'SELECT c.nome_categoria,\n  AVG(pe.total) AS ticket_medio\nFROM pedidos pe\nINNER JOIN itens_pedido ip ON pe.id_pedido = ip.id_pedido\nINNER JOIN produtos p ON ip.id_produto = p.id_produto\nINNER JOIN categorias c ON p.id_categoria = c.id_categoria\nGROUP BY c.id_categoria, c.nome_categoria\nORDER BY ticket_medio DESC',
+   check:function(r){return r.length>0&&r[0].hasOwnProperty('nome_categoria')&&r[0].ticket_medio>=r[r.length-1].ticket_medio;}}
 ];
+
+var TOTAL_CORE=CH.filter(function(c){return c.sec==='core';}).length;
+var TOTAL_ALL=CH.length;
+
 function renderChList(){
   var list=document.getElementById('chlist');list.innerHTML='';
+  var lastSec=null;
   CH.forEach(function(ch){
-    var d=document.createElement('div');d.className='chitem'+(solved[ch.id]?' done':'');d.id='chi-'+ch.id;
-    d.innerHTML='<span style="font-size:1rem;flex-shrink:0">'+(solved[ch.id]?'✅':'⬜')+'</span><div style="flex:1;min-width:0"><div class="chit">'+ch.id+'. '+esc(ch.title)+'</div><div class="chilv" style="color:'+ch.cl+'">'+ch.lv+'</div></div>';
-    d.onclick=function(){loadCh(ch.id);};list.appendChild(d);
-  });updateProg();
+    if(ch.sec!==lastSec){
+      lastSec=ch.sec;
+      var hdr=document.createElement('div');
+      hdr.className='ch-section-hdr';
+      if(ch.sec==='core'){
+        hdr.innerHTML='Obrigatórios <span class="sec-badge" style="background:rgba(74,222,128,0.15);color:#4ade80">'+TOTAL_CORE+' desafios</span>';
+      } else {
+        hdr.innerHTML='Aprofundamento <span class="sec-badge" style="background:rgba(167,139,250,0.15);color:#a78bfa">opcional</span>';
+      }
+      list.appendChild(hdr);
+    }
+    var d=document.createElement('div');
+    d.className='chitem'+(solved[ch.id]?' done':'');
+    d.id='chi-'+ch.id;
+    d.innerHTML='<span style="font-size:1rem;flex-shrink:0">'+(solved[ch.id]?'✅':'⬜')+'</span>'
+      +'<div style="flex:1;min-width:0">'
+        +'<div class="chit">'+ch.id+'. '+esc(ch.title)+'</div>'
+        +'<div class="chilv" style="color:'+ch.cl+'">'+ch.lv+'</div>'
+      +'</div>';
+    d.onclick=function(){loadCh(ch.id);};
+    list.appendChild(d);
+  });
+  updateProg();
 }
+
 function loadCh(id){
   var ch=CH.find(function(c){return c.id===id;});
   document.querySelectorAll('.chitem').forEach(function(el){el.classList.remove('sel');});
   var item=document.getElementById('chi-'+id);if(item)item.classList.add('sel');
+  var badge=ch.sec==='core'
+    ?'<span style="font-size:0.62rem;font-weight:700;padding:2px 8px;border-radius:20px;background:rgba(74,222,128,0.15);color:#4ade80;margin-left:6px">obrigatório</span>'
+    :'<span style="font-size:0.62rem;font-weight:700;padding:2px 8px;border-radius:20px;background:rgba(167,139,250,0.15);color:#a78bfa;margin-left:6px">opcional</span>';
   document.getElementById('chmain').innerHTML=
-    '<div class="chda"><h3>'+ch.id+'. '+esc(ch.title)+'</h3><p>'+esc(ch.desc)+'</p><div class="chtags">'+ch.tags.map(function(t){return '<span class="chtag">'+t+'</span>';}).join('')+'</div></div>'
-    +'<div class="chea"><div class="chebar"><button class="btn primary" onclick="chkCh('+id+')">✓ Verificar</button><button class="btn" onclick="runCh('+id+')">▶ Executar</button><button class="btn" onclick="togGab('+id+')">Gabarito</button></div><textarea class="ched" id="ched-'+id+'" placeholder="-- Escreva sua query aqui..."></textarea><div class="chra" id="chres-'+id+'"></div></div>';
+    '<div class="chda">'
+      +'<h3>'+ch.id+'. '+esc(ch.title)+badge+'</h3>'
+      +'<p>'+esc(ch.desc)+'</p>'
+      +'<div class="chtags">'+ch.tags.map(function(t){return '<span class="chtag">'+t+'</span>';}).join('')+'</div>'
+    +'</div>'
+    +'<div class="chea">'
+      +'<div class="chebar">'
+        +'<button class="btn primary" onclick="chkCh('+id+')">✓ Verificar</button>'
+        +'<button class="btn" onclick="runCh('+id+')">▶ Executar</button>'
+        +'<button class="btn" onclick="togGab('+id+')">Gabarito</button>'
+      +'</div>'
+      +'<textarea class="ched" id="ched-'+id+'" placeholder="-- Escreva sua query aqui..."></textarea>'
+      +'<div class="chra" id="chres-'+id+'"></div>'
+    +'</div>';
 }
+
 function runCh(id){
   var sql=document.getElementById('ched-'+id).value.trim();
   var res=document.getElementById('chres-'+id);
   if(!sql){res.innerHTML='<div class="chfb info">⚠ Escreva uma query primeiro.</div>';return;}
-  try{
-    var rows=sqlEngine(sql);
-    if(!rows||!rows.length){res.innerHTML='<div class="chfb info">0 linhas retornadas.</div>';return;}
-    var show=rows.slice(0,10);
-    res.innerHTML='<div class="chfb ok" style="padding:6px 1rem;font-size:0.72rem">'+rows.length+' linha'+(rows.length>1?'s':'')+'</div><div style="overflow-x:auto">'+buildTbl(show,'rtbl')+'</div>'+(rows.length>10?'<div style="padding:4px 1rem;font-size:0.68rem;color:var(--text3)">...e mais '+(rows.length-10)+' linhas</div>':'');
-  }catch(e){res.innerHTML='<div class="errmsg" style="margin:8px">'+esc(e.message)+'</div>';}
+  try{var rows=sqlEngine(sql);if(!rows||!rows.length){res.innerHTML='<div class="chfb info">0 linhas retornadas.</div>';return;}var show=rows.slice(0,10);res.innerHTML='<div class="chfb ok" style="padding:6px 1rem;font-size:0.72rem">'+rows.length+' linha'+(rows.length>1?'s':'')+'</div><div style="overflow-x:auto">'+buildTbl(show,'rtbl')+'</div>'+(rows.length>10?'<div style="padding:4px 1rem;font-size:0.68rem;color:var(--text3)">...e mais '+(rows.length-10)+' linhas</div>':'');}
+  catch(e){res.innerHTML='<div class="errmsg" style="margin:8px">'+esc(e.message)+'</div>';}
 }
+
 function chkCh(id){
   var ch=CH.find(function(c){return c.id===id;});
   var sql=document.getElementById('ched-'+id).value.trim();
   var res=document.getElementById('chres-'+id);
   if(!sql){res.innerHTML='<div class="chfb info">⚠ Escreva uma query primeiro.</div>';return;}
-  try{
-    var rows=sqlEngine(sql);
+  try{var rows=sqlEngine(sql);
     if(ch.check(rows)){
       solved[id]=true;
-      var item=document.getElementById('chi-'+id);
-      if(item)item.querySelector('span').textContent='✅';
+      var item=document.getElementById('chi-'+id);if(item)item.querySelector('span').textContent='✅';
       res.innerHTML='<div class="chfb ok">✅ Correto! Query retornou o resultado esperado.</div>';
       updateProg();setTimeout(function(){runCh(id);},200);
-    }else{
-      res.innerHTML='<div class="chfb err">✗ Resultado incorreto. Verifique a lógica e tente novamente.</div>';runCh(id);
-    }
+    }else{res.innerHTML='<div class="chfb err">✗ Resultado incorreto. Verifique a lógica e tente novamente.</div>';runCh(id);}
   }catch(e){res.innerHTML='<div class="errmsg" style="margin:8px">'+esc(e.message)+'</div>';}
 }
+
 function togGab(id){
   var ch=CH.find(function(c){return c.id===id;});
   var res=document.getElementById('chres-'+id);
-  var ex=document.getElementById('gab-'+id);
-  if(ex){ex.remove();return;}
+  var ex=document.getElementById('gab-'+id);if(ex){ex.remove();return;}
   var d=document.createElement('div');d.id='gab-'+id;d.className='gabbox';
   d.innerHTML='<div class="gablbl">Gabarito</div><div class="gabcode">'+esc(ch.gab)+'</div>';
   res.appendChild(d);
 }
+
 function updateProg(){
-  var n=Object.keys(solved).length,t=CH.length,p=Math.round(n/t*100);
+  var n=Object.keys(solved).length,t=TOTAL_ALL,p=Math.round(n/t*100);
+  var core=CH.filter(function(c){return c.sec==='core'&&solved[c.id];}).length;
   document.getElementById('hprog').textContent=n+'/'+t;
   document.getElementById('hfill').style.width=p+'%';
-  document.getElementById('chtxt').textContent=n+' de '+t+' concluídos';
+  document.getElementById('chtxt').textContent=core+' de '+TOTAL_CORE+' obrigatórios concluídos'+(n>TOTAL_CORE?' · '+( n-TOTAL_CORE)+' extras':'');
   document.getElementById('chpf').style.width=p+'%';
 }
-document.addEventListener('keydown',function(e){
-  if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){e.preventDefault();if(document.getElementById('panel-editor').classList.contains('active'))runQ();}
-});
-window.addEventListener('load',function(){
-  runQ();
-  showDT('produtos',document.querySelector('.dtab'));
-  renderChList();
-});
+
+document.addEventListener('keydown',function(e){if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){e.preventDefault();if(document.getElementById('panel-editor').classList.contains('active'))runQ();}});
+window.addEventListener('load',function(){runQ();showDT('produtos',document.querySelector('.dtab'));renderChList();});
 </script>
 
 
