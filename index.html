@@ -1,1140 +1,580 @@
 <!DOCTYPE html>
-<!-- saved from url=(0053)file:///C:/Users/natha/Downloads/leanacademy-sql.html -->
+<!-- saved from url=(0055)file:///C:/Users/natha/Downloads/leanacademy-sql_1.html -->
 <html lang="pt-BR"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LeanAcademy SQL — Treine queries do zero</title>
+<title>LeanAcademy SQL</title>
 <link rel="preconnect" href="https://fonts.googleapis.com/">
-<link href="./Index_files/css2" rel="stylesheet">
+<link href="./index_files/css2" rel="stylesheet">
 <style>
-:root {
-  --bg: #0c0e14;
-  --bg2: #13151e;
-  --bg3: #1a1d28;
-  --bg4: #1e2235;
-  --border: rgba(255,255,255,0.07);
-  --border2: rgba(255,255,255,0.13);
-  --text: #e8eaf0;
-  --text2: #8b8fa8;
-  --text3: #555878;
-  --accent: #4ade80;
-  --accent2: #22c55e;
-  --green: #4ade80;
-  --green-bg: rgba(74,222,128,0.12);
-  --red: #f87272;
-  --red-bg: rgba(248,114,114,0.1);
-  --amber: #a78bfa;
-  --amber-bg: rgba(167,139,250,0.12);
-  --purple: #a78bfa;
-  --purple-bg: rgba(167,139,250,0.12);
-  --teal: #4ade80;
-  --teal-bg: rgba(74,222,128,0.1);
-  --mono: 'JetBrains Mono', monospace;
-  --display: 'Syne', sans-serif;
-  --radius: 10px;
-  --radius-lg: 14px;
+:root{
+  --bg:#0c0e14;--bg2:#13151e;--bg3:#1a1d28;--bg4:#1e2235;
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);
+  --text:#e8eaf0;--text2:#8b8fa8;--text3:#555878;
+  --green:#4ade80;--green-bg:rgba(74,222,128,0.12);
+  --purple:#a78bfa;--purple-bg:rgba(167,139,250,0.12);
+  --red:#f87272;--red-bg:rgba(248,114,114,0.1);
+  --amber:#fbbf24;--amber-bg:rgba(251,191,36,0.1);
+  --mono:'JetBrains Mono',monospace;--display:'Syne',sans-serif;
+  --radius:10px;--radius-lg:14px;
 }
-
-* { box-sizing: border-box; margin: 0; padding: 0; }
-html { font-size: 15px; }
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: var(--display);
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
-/* SCROLLBAR */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 10px; }
-
-/* HEADER */
-.header {
-  border-bottom: 1px solid var(--border);
-  border-top: 2px solid transparent;
-  background-image: linear-gradient(var(--bg), var(--bg)), linear-gradient(90deg, #4ade80, #a78bfa, #4ade80);
-  background-origin: border-box;
-  background-clip: padding-box, border-box;
-  padding: 0 2rem;
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-  height: 56px;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  backdrop-filter: blur(12px);
-}
-.logo {
-  font-size: 1rem;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.logo-icon {
-  width: 28px; height: 28px;
-  background: var(--accent);
-  border-radius: 7px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 13px;
-  font-weight: 700;
-  color: #fff;
-  font-family: var(--mono);
-}
-.logo-text { color: var(--text); }
-.logo-sub { color: var(--text3); font-weight: 400; font-size: 0.8rem; margin-left: 4px; }
-.header-tabs {
-  display: flex;
-  gap: 2px;
-  margin-left: auto;
-  background: var(--bg3);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 3px;
-}
-.htab {
-  padding: 5px 14px;
-  font-size: 0.78rem;
-  font-weight: 600;
-  cursor: pointer;
-  border-radius: 6px;
-  color: var(--text2);
-  transition: all 0.15s;
-  border: none;
-  background: transparent;
-  font-family: var(--display);
-  letter-spacing: 0.01em;
-}
-.htab:hover { color: var(--text); }
-.htab.active { background: var(--bg4); color: var(--text); box-shadow: inset 0 0 0 1px #4ade8044; }
-.progress-pill {
-  display: flex; align-items: center; gap: 8px;
-  font-size: 0.72rem; color: var(--text3); font-weight: 600;
-  padding: 5px 12px;
-  background: var(--bg3);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-}
-.pill-bar { width: 60px; height: 4px; background: var(--border2); border-radius: 4px; overflow: hidden; }
-.pill-fill { height: 100%; background: var(--green); border-radius: 4px; transition: width 0.4s; }
-
-/* LAYOUT */
-.main { flex: 1; display: flex; overflow: hidden; height: calc(100vh - 56px); }
-.panel { display: none; flex: 1; overflow: hidden; }
-.panel.active { display: flex; flex-direction: column; }
-
-/* EDITOR PANEL */
-.editor-layout {
-  display: grid;
-  grid-template-columns: 220px 1fr;
-  grid-template-rows: 1fr 1fr;
-  height: 100%;
-  overflow: hidden;
-}
-.sidebar {
-  grid-row: 1 / 3;
-  border-right: 1px solid var(--border);
-  overflow-y: auto;
-  padding: 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-.sidebar-section-title {
-  font-size: 0.65rem;
-  font-weight: 700;
-  color: var(--text3);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  margin-bottom: 4px;
-}
-.schema-card {
-  background: var(--bg3);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 10px 12px;
-  margin-bottom: 6px;
-  cursor: pointer;
-  transition: border-color 0.15s;
-}
-.schema-card:hover { border-color: var(--border2); }
-.schema-card-title {
-  font-size: 0.78rem;
-  font-weight: 700;
-  color: var(--text);
-  margin-bottom: 5px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.schema-col {
-  font-size: 0.68rem;
-  color: var(--text3);
-  font-family: var(--mono);
-  padding: 1px 0;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-.pk-badge { color: #4ade80; font-size: 0.6rem; }
-.fk-badge { color: #a78bfa; font-size: 0.6rem; }
-
-.quick-section { display: flex; flex-direction: column; gap: 4px; }
-.quick-btn {
-  text-align: left;
-  background: var(--bg3);
-  border: 1px solid var(--border);
-  border-radius: 7px;
-  padding: 7px 10px;
-  cursor: pointer;
-  transition: all 0.15s;
-  color: var(--text2);
-  font-family: var(--mono);
-  font-size: 0.68rem;
-  line-height: 1.4;
-}
-.quick-btn:hover { border-color: var(--accent); color: var(--accent); }
-.quick-tag {
-  font-size: 0.6rem;
-  font-weight: 700;
-  font-family: var(--display);
-  letter-spacing: 0.06em;
-  display: block;
-  color: var(--text3);
-  margin-bottom: 2px;
-}
-
-.editor-top {
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-.editor-bar {
-  background: var(--bg2);
-  border-bottom: 1px solid var(--border);
-  padding: 8px 1rem;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.editor-label {
-  font-size: 0.65rem;
-  font-weight: 700;
-  color: var(--text3);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  font-family: var(--mono);
-}
-.run-btn {
-  margin-left: auto;
-  background: linear-gradient(135deg, #22c55e, #4ade80);
-  color: #0a1a10;
-  border: none;
-  border-radius: 7px;
-  padding: 6px 16px;
-  font-size: 0.78rem;
-  font-weight: 700;
-  cursor: pointer;
-  font-family: var(--display);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  transition: opacity 0.15s, transform 0.1s;
-}
-.run-btn:hover { opacity: 0.85; }
-.run-btn:active { transform: scale(0.97); }
-.shortcut-hint { font-size: 0.65rem; color: var(--text3); font-family: var(--mono); }
-textarea#sql-editor {
-  flex: 1;
-  background: var(--bg);
-  color: var(--text);
-  font-family: var(--mono);
-  font-size: 0.85rem;
-  line-height: 1.7;
-  padding: 1rem 1.2rem;
-  border: none;
-  outline: none;
-  resize: none;
-  tab-size: 2;
-}
-textarea#sql-editor::placeholder { color: var(--text3); }
-
-.result-bottom {
-  border-top: 1px solid var(--border);
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
-.result-bar {
-  background: var(--bg2);
-  border-bottom: 1px solid var(--border);
-  padding: 7px 1rem;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-shrink: 0;
-}
-.result-label {
-  font-size: 0.65rem;
-  font-weight: 700;
-  color: var(--text3);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  font-family: var(--mono);
-}
-.row-badge {
-  font-size: 0.65rem;
-  font-weight: 700;
-  padding: 2px 8px;
-  border-radius: 20px;
-  font-family: var(--mono);
-}
-.row-badge.ok { background: var(--green-bg); color: var(--green); }
-.row-badge.err { background: var(--red-bg); color: var(--red); }
-.result-content { flex: 1; overflow: auto; padding: 0; }
-.result-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; font-family: var(--mono); }
-.result-table th {
-  background: var(--bg3);
-  padding: 8px 14px;
-  text-align: left;
-  font-size: 0.65rem;
-  font-weight: 700;
-  color: var(--text3);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  border-bottom: 1px solid var(--border);
-  white-space: nowrap;
-  position: sticky; top: 0;
-}
-.result-table td {
-  padding: 7px 14px;
-  border-bottom: 1px solid var(--border);
-  color: var(--text);
-  white-space: nowrap;
-}
-.result-table tr:hover td { background: var(--bg3); }
-.null-v { color: var(--text3); font-style: italic; }
-.err-msg {
-  padding: 1rem 1.2rem;
-  color: var(--red);
-  font-family: var(--mono);
-  font-size: 0.82rem;
-  background: var(--red-bg);
-  border-left: 3px solid var(--red);
-  margin: 1rem;
-  border-radius: 0 var(--radius) var(--radius) 0;
-}
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  color: var(--text3);
-  gap: 8px;
-  font-size: 0.82rem;
-}
-.empty-icon { font-size: 2rem; opacity: 0.3; }
-
-/* DATA PANEL */
-.data-panel-inner { display: flex; flex-direction: column; height: 100%; overflow: hidden; }
-.data-tabs-bar {
-  display: flex;
-  gap: 2px;
-  padding: 10px 1.5rem;
-  border-bottom: 1px solid var(--border);
-  background: var(--bg2);
-  flex-shrink: 0;
-}
-.data-tab {
-  padding: 6px 14px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  cursor: pointer;
-  border-radius: 7px;
-  color: var(--text2);
-  background: transparent;
-  border: 1px solid transparent;
-  transition: all 0.15s;
-  font-family: var(--display);
-}
-.data-tab:hover { color: var(--text); }
-.data-tab.active { background: var(--bg4); border-color: var(--border2); color: var(--text); }
-.data-table-wrap { flex: 1; overflow: auto; }
-.data-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; font-family: var(--mono); }
-.data-table th {
-  background: var(--bg3);
-  padding: 9px 16px;
-  text-align: left;
-  font-size: 0.65rem;
-  font-weight: 700;
-  color: #a78bfa;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  border-bottom: 1px solid var(--border);
-  white-space: nowrap;
-  position: sticky; top: 0;
-}
-.data-table td {
-  padding: 8px 16px;
-  border-bottom: 1px solid var(--border);
-  color: var(--text);
-  white-space: nowrap;
-}
-.data-table tr:last-child td { border-bottom: none; }
-.data-table tr:hover td { background: var(--bg3); }
-.td-num { color: var(--amber); }
-.td-str { color: var(--green); }
-.td-id { color: var(--text2); }
-
-/* CHALLENGES PANEL */
-.challenges-layout { display: grid; grid-template-columns: 340px 1fr; height: 100%; overflow: hidden; }
-.ch-list-sidebar { border-right: 1px solid var(--border); overflow-y: auto; }
-.ch-list-header {
-  padding: 1rem 1.2rem;
-  border-bottom: 1px solid var(--border);
-  background: var(--bg2);
-  position: sticky; top: 0;
-}
-.ch-list-header h2 { font-size: 0.9rem; font-weight: 700; margin-bottom: 4px; }
-.ch-list-header p { font-size: 0.72rem; color: var(--text3); }
-.ch-progress-bar { height: 3px; background: var(--border); border-radius: 3px; margin-top: 10px; overflow: hidden; }
-.ch-progress-fill { height: 100%; background: var(--green); border-radius: 3px; transition: width 0.4s; }
-.ch-item {
-  padding: 12px 1.2rem;
-  border-bottom: 1px solid var(--border);
-  cursor: pointer;
-  transition: background 0.1s;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.ch-item:hover { background: var(--bg3); }
-.ch-item.selected { background: var(--bg4); border-left: 2px solid #4ade80; }
-.ch-item.done { opacity: 0.7; }
-.ch-status-icon { font-size: 1rem; flex-shrink: 0; }
-.ch-info { flex: 1; min-width: 0; }
-.ch-item-title { font-size: 0.8rem; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.ch-item-lvl { font-size: 0.65rem; font-weight: 700; margin-top: 2px; }
-
-.ch-main { display: flex; flex-direction: column; overflow: hidden; }
-.ch-desc-area {
-  padding: 1.5rem;
-  border-bottom: 1px solid var(--border);
-  background: var(--bg2);
-  flex-shrink: 0;
-}
-.ch-desc-area h3 { font-size: 1rem; font-weight: 700; margin-bottom: 6px; }
-.ch-desc-area p { font-size: 0.82rem; color: var(--text2); line-height: 1.65; margin-bottom: 10px; }
-.ch-tags { display: flex; gap: 6px; flex-wrap: wrap; }
-.ch-tag {
-  font-size: 0.65rem;
-  font-weight: 700;
-  padding: 3px 9px;
-  border-radius: 20px;
-  font-family: var(--mono);
-  background: var(--bg4);
-  border: 1px solid var(--border2);
-  color: var(--text2);
-}
-.ch-editor-area {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-.ch-editor-bar {
-  padding: 8px 1rem;
-  background: var(--bg2);
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-textarea.ch-editor {
-  flex: 1;
-  background: var(--bg);
-  color: var(--text);
-  font-family: var(--mono);
-  font-size: 0.82rem;
-  line-height: 1.7;
-  padding: 1rem 1.2rem;
-  border: none;
-  outline: none;
-  resize: none;
-  min-height: 100px;
-}
-.ch-result-area { border-top: 1px solid var(--border); overflow: auto; max-height: 200px; flex-shrink: 0; }
-.ch-feedback {
-  padding: 10px 1rem;
-  font-size: 0.8rem;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.ch-feedback.ok { background: var(--green-bg); color: var(--green); border-top: 1px solid rgba(62,207,142,0.2); }
-.ch-feedback.err { background: var(--red-bg); color: var(--red); border-top: 1px solid rgba(248,114,114,0.2); }
-.ch-feedback.info { background: var(--amber-bg); color: var(--amber); border-top: 1px solid rgba(251,191,36,0.2); }
-
-.btn {
-  border: 1px solid var(--border2);
-  background: var(--bg3);
-  color: var(--text2);
-  border-radius: 7px;
-  padding: 6px 14px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  cursor: pointer;
-  font-family: var(--display);
-  transition: all 0.15s;
-}
-.btn:hover { color: var(--text); border-color: var(--border2); background: var(--bg4); }
-.btn.primary { background: linear-gradient(135deg, #22c55e, #4ade80); border-color: transparent; color: #0a1a10; }
-.btn.primary:hover { opacity: 0.85; }
-
-.gab-box {
-  margin: 0.8rem 1rem;
-  background: var(--bg3);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 10px 14px;
-}
-.gab-lbl { font-size: 0.6rem; font-weight: 700; color: var(--text3); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 5px; }
-.gab-code { font-family: var(--mono); font-size: 0.75rem; color: var(--text2); white-space: pre; line-height: 1.6; overflow-x: auto; }
-
-/* SCHEMA PANEL */
-.schema-panel-inner { padding: 1.5rem; overflow-y: auto; height: 100%; }
-.schema-panel-inner h2 { font-size: 1.1rem; font-weight: 800; margin-bottom: 4px; }
-.schema-panel-inner > p { font-size: 0.8rem; color: var(--text3); margin-bottom: 1.5rem; }
-.schema-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; margin-bottom: 1.5rem; }
-.schema-full-card {
-  background: var(--bg3);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-}
-.schema-full-card-header {
-  padding: 10px 14px;
-  background: var(--bg4);
-  border-bottom: 1px solid var(--border);
-  font-size: 0.82rem;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  gap: 7px;
-}
-.schema-full-card-body { padding: 6px 0; }
-.schema-field {
-  display: flex;
-  align-items: center;
-  padding: 5px 14px;
-  gap: 8px;
-  font-family: var(--mono);
-  font-size: 0.72rem;
-}
-.schema-field:hover { background: var(--bg4); }
-.field-name { color: var(--text); flex: 1; }
-.field-type { color: var(--text3); }
-.field-badge {
-  font-size: 0.55rem;
-  font-weight: 700;
-  padding: 1px 5px;
-  border-radius: 4px;
-  letter-spacing: 0.05em;
-}
-.field-badge.pk { background: rgba(74,222,128,0.12); color: #4ade80; }
-.field-badge.fk { background: rgba(167,139,250,0.12); color: #a78bfa; }
-
-.relations-box {
-  background: var(--bg3);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 1.2rem;
-}
-.relations-box h3 { font-size: 0.82rem; font-weight: 700; margin-bottom: 10px; color: var(--text2); }
-.relation-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 0;
-  border-bottom: 1px solid var(--border);
-  font-size: 0.78rem;
-}
-.relation-row:last-child { border-bottom: none; }
-.rel-table { font-family: var(--mono); color: #4ade80; }
-.rel-type { font-size: 0.65rem; color: var(--text3); font-family: var(--mono); padding: 2px 6px; background: var(--bg4); border-radius: 4px; }
-.rel-via { font-size: 0.7rem; color: var(--text3); margin-left: auto; font-family: var(--mono); }
-
-/* RESPONSIVE */
-@media (max-width: 768px) {
-  .editor-layout { grid-template-columns: 1fr; grid-template-rows: auto 1fr auto; }
-  .sidebar { grid-row: auto; border-right: none; border-bottom: 1px solid var(--border); max-height: 200px; }
-  .challenges-layout { grid-template-columns: 1fr; }
-  .ch-list-sidebar { max-height: 200px; border-right: none; border-bottom: 1px solid var(--border); }
-  .header { padding: 0 1rem; gap: 8px; }
-  .logo-sub { display: none; }
-  .progress-pill { display: none; }
-}
-
-/* ANIMATIONS */
-@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
-.fade-in { animation: fadeIn 0.2s ease; }
-
-.no-challenge {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  color: var(--text3);
-  gap: 8px;
-  font-size: 0.82rem;
-  text-align: center;
-  padding: 2rem;
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:15px}
+body{background:var(--bg);color:var(--text);font-family:var(--display);min-height:100vh;display:flex;flex-direction:column}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:10px}
+.header{border-bottom:1px solid var(--border);border-top:2px solid transparent;background-image:linear-gradient(var(--bg),var(--bg)),linear-gradient(90deg,#4ade80,#a78bfa,#4ade80);background-origin:border-box;background-clip:padding-box,border-box;padding:0 2rem;display:flex;align-items:center;gap:1.5rem;height:56px;position:sticky;top:0;z-index:100;backdrop-filter:blur(12px)}
+.logo{font-size:1rem;font-weight:800;letter-spacing:-0.02em;display:flex;align-items:center;gap:8px}
+.logo-icon{width:28px;height:28px;background:linear-gradient(135deg,#4ade80,#a78bfa);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:15px}
+.logo-sql{color:var(--green);font-weight:600;margin-left:2px}
+.header-tabs{display:flex;gap:2px;margin-left:auto;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:3px}
+.htab{padding:5px 14px;font-size:0.78rem;font-weight:600;cursor:pointer;border-radius:6px;color:var(--text2);transition:all 0.15s;border:none;background:transparent;font-family:var(--display);letter-spacing:0.01em}
+.htab:hover{color:var(--text)}
+.htab.active{background:var(--bg4);color:var(--text);box-shadow:inset 0 0 0 1px rgba(74,222,128,0.25)}
+.progress-pill{display:flex;align-items:center;gap:8px;font-size:0.72rem;color:var(--text3);font-weight:600;padding:5px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:20px}
+.pill-bar{width:60px;height:4px;background:var(--border2);border-radius:4px;overflow:hidden}
+.pill-fill{height:100%;background:var(--green);border-radius:4px;transition:width 0.4s}
+.main{flex:1;display:flex;overflow:hidden;height:calc(100vh - 56px)}
+.panel{display:none;flex:1;overflow:hidden}
+.panel.active{display:flex;flex-direction:column}
+.editor-layout{display:grid;grid-template-columns:220px 1fr;grid-template-rows:1fr 1fr;height:100%;overflow:hidden}
+.sidebar{grid-row:1/3;border-right:1px solid var(--border);overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:1rem}
+.stitle{font-size:0.65rem;font-weight:700;color:var(--text3);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px}
+.scrd{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;margin-bottom:6px;cursor:pointer;transition:border-color 0.15s}
+.scrd:hover{border-color:var(--border2)}
+.scrd-title{font-size:0.78rem;font-weight:700;color:var(--text);margin-bottom:5px}
+.scrd-col{font-size:0.68rem;color:var(--text3);font-family:var(--mono);padding:1px 0}
+.pk-c{color:var(--green)}.fk-c{color:var(--purple)}
+.qbtn{text-align:left;background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:7px 10px;cursor:pointer;transition:all 0.15s;color:var(--text2);font-family:var(--mono);font-size:0.68rem;line-height:1.4;width:100%;margin-bottom:4px}
+.qbtn:hover{border-color:var(--green);color:var(--green)}
+.qtag{font-size:0.6rem;font-weight:700;font-family:var(--display);letter-spacing:0.06em;display:block;color:var(--text3);margin-bottom:2px}
+.editor-top{border-bottom:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+.editor-bar{background:var(--bg2);border-bottom:1px solid var(--border);padding:8px 1rem;display:flex;align-items:center;gap:10px}
+.elbl{font-size:0.65rem;font-weight:700;color:var(--text3);letter-spacing:0.1em;text-transform:uppercase;font-family:var(--mono)}
+.shint{font-size:0.65rem;color:var(--text3);font-family:var(--mono)}
+.run-btn{margin-left:auto;background:linear-gradient(135deg,#22c55e,#4ade80);color:#0a1a10;border:none;border-radius:7px;padding:6px 16px;font-size:0.78rem;font-weight:700;cursor:pointer;font-family:var(--display);display:flex;align-items:center;gap:6px;transition:opacity 0.15s,transform 0.1s}
+.run-btn:hover{opacity:0.85}.run-btn:active{transform:scale(0.97)}
+textarea#sqled{flex:1;background:var(--bg);color:var(--text);font-family:var(--mono);font-size:0.85rem;line-height:1.7;padding:1rem 1.2rem;border:none;outline:none;resize:none;tab-size:2}
+textarea#sqled::placeholder{color:var(--text3)}
+.result-bottom{border-top:1px solid var(--border);overflow:hidden;display:flex;flex-direction:column}
+.result-bar{background:var(--bg2);border-bottom:1px solid var(--border);padding:7px 1rem;display:flex;align-items:center;gap:10px;flex-shrink:0}
+.rlbl{font-size:0.65rem;font-weight:700;color:var(--text3);letter-spacing:0.1em;text-transform:uppercase;font-family:var(--mono)}
+.rbadge{font-size:0.65rem;font-weight:700;padding:2px 8px;border-radius:20px;font-family:var(--mono)}
+.rbadge.ok{background:var(--green-bg);color:var(--green)}
+.rbadge.err{background:var(--red-bg);color:var(--red)}
+.rcontent{flex:1;overflow:auto}
+.rtbl{width:100%;border-collapse:collapse;font-size:0.78rem;font-family:var(--mono)}
+.rtbl th{background:var(--bg3);padding:8px 14px;text-align:left;font-size:0.65rem;font-weight:700;color:var(--text3);letter-spacing:0.06em;text-transform:uppercase;border-bottom:1px solid var(--border);white-space:nowrap;position:sticky;top:0}
+.rtbl td{padding:7px 14px;border-bottom:1px solid var(--border);white-space:nowrap}
+.rtbl tr:hover td{background:var(--bg3)}
+.null-v{color:var(--text3);font-style:italic}
+.nnum{color:var(--amber)}.nstr{color:var(--text)}.nid{color:var(--text2)}
+.errmsg{padding:1rem 1.2rem;color:var(--red);font-family:var(--mono);font-size:0.82rem;background:var(--red-bg);border-left:3px solid var(--red);margin:1rem;border-radius:0 var(--radius) var(--radius) 0}
+.empty-st{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--text3);gap:8px;font-size:0.82rem}
+.data-pi{display:flex;flex-direction:column;height:100%;overflow:hidden}
+.dtabs{display:flex;gap:2px;padding:10px 1.5rem;border-bottom:1px solid var(--border);background:var(--bg2);flex-shrink:0}
+.dtab{padding:6px 14px;font-size:0.75rem;font-weight:600;cursor:pointer;border-radius:7px;color:var(--text2);background:transparent;border:1px solid transparent;transition:all 0.15s;font-family:var(--display)}
+.dtab:hover{color:var(--text)}
+.dtab.active{background:var(--bg4);border-color:var(--border2);color:var(--text)}
+.dtw{flex:1;overflow:auto}
+.dttbl{width:100%;border-collapse:collapse;font-size:0.78rem;font-family:var(--mono)}
+.dttbl th{background:var(--bg3);padding:9px 16px;text-align:left;font-size:0.65rem;font-weight:700;color:var(--purple);letter-spacing:0.06em;text-transform:uppercase;border-bottom:1px solid var(--border);white-space:nowrap;position:sticky;top:0}
+.dttbl td{padding:8px 16px;border-bottom:1px solid var(--border);white-space:nowrap}
+.dttbl tr:last-child td{border-bottom:none}
+.dttbl tr:hover td{background:var(--bg3)}
+.spi{padding:1.5rem;overflow-y:auto;height:100%}
+.spi h2{font-size:1.1rem;font-weight:800;margin-bottom:4px}
+.spi>p{font-size:0.8rem;color:var(--text3);margin-bottom:1.5rem}
+.sgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-bottom:1.5rem}
+.sfc{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden}
+.sfch{padding:10px 14px;background:var(--bg4);border-bottom:1px solid var(--border);font-size:0.82rem;font-weight:700}
+.sff{display:flex;align-items:center;padding:5px 14px;gap:8px;font-family:var(--mono);font-size:0.72rem}
+.sff:hover{background:var(--bg4)}
+.fn{color:var(--text);flex:1}.ft{color:var(--text3)}
+.fb{font-size:0.55rem;font-weight:700;padding:1px 5px;border-radius:4px;letter-spacing:0.05em}
+.fb.pk{background:rgba(74,222,128,0.12);color:var(--green)}
+.fb.fk{background:rgba(167,139,250,0.12);color:var(--purple)}
+.relbox{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.2rem}
+.relbox h3{font-size:0.82rem;font-weight:700;margin-bottom:10px;color:var(--text2)}
+.relrow{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);font-size:0.78rem}
+.relrow:last-child{border-bottom:none}
+.rt{font-family:var(--mono);color:var(--green)}
+.rtype{font-size:0.65rem;color:var(--text3);font-family:var(--mono);padding:2px 6px;background:var(--bg4);border-radius:4px}
+.rvia{font-size:0.7rem;color:var(--text3);margin-left:auto;font-family:var(--mono)}
+.chlayout{display:grid;grid-template-columns:340px 1fr;height:100%;overflow:hidden}
+.chsb{border-right:1px solid var(--border);overflow-y:auto}
+.chsbh{padding:1rem 1.2rem;border-bottom:1px solid var(--border);background:var(--bg2);position:sticky;top:0}
+.chsbh h2{font-size:0.9rem;font-weight:700;margin-bottom:4px}
+.chsbh p{font-size:0.72rem;color:var(--text3)}
+.chpb{height:3px;background:var(--border);border-radius:3px;margin-top:10px;overflow:hidden}
+.chpf{height:100%;background:var(--green);border-radius:3px;transition:width 0.4s}
+.chitem{padding:12px 1.2rem;border-bottom:1px solid var(--border);cursor:pointer;transition:background 0.1s;display:flex;align-items:center;gap:10px}
+.chitem:hover{background:var(--bg3)}
+.chitem.sel{background:var(--bg4);border-left:2px solid var(--green)}
+.chit{font-size:0.8rem;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chilv{font-size:0.65rem;font-weight:700;margin-top:2px}
+.chmain{display:flex;flex-direction:column;overflow:hidden}
+.chda{padding:1.5rem;border-bottom:1px solid var(--border);background:var(--bg2);flex-shrink:0}
+.chda h3{font-size:1rem;font-weight:700;margin-bottom:6px}
+.chda p{font-size:0.82rem;color:var(--text2);line-height:1.65;margin-bottom:10px}
+.chtags{display:flex;gap:6px;flex-wrap:wrap}
+.chtag{font-size:0.65rem;font-weight:700;padding:3px 9px;border-radius:20px;font-family:var(--mono);background:var(--bg4);border:1px solid var(--border2);color:var(--text2)}
+.chea{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.chebar{padding:8px 1rem;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+textarea.ched{flex:1;background:var(--bg);color:var(--text);font-family:var(--mono);font-size:0.82rem;line-height:1.7;padding:1rem 1.2rem;border:none;outline:none;resize:none;min-height:100px}
+.chra{border-top:1px solid var(--border);overflow:auto;max-height:200px;flex-shrink:0}
+.chfb{padding:10px 1rem;font-size:0.8rem;font-weight:600;display:flex;align-items:center;gap:8px}
+.chfb.ok{background:var(--green-bg);color:var(--green);border-top:1px solid rgba(74,222,128,0.2)}
+.chfb.err{background:var(--red-bg);color:var(--red);border-top:1px solid rgba(248,114,114,0.2)}
+.chfb.info{background:var(--amber-bg);color:var(--amber);border-top:1px solid rgba(251,191,36,0.2)}
+.btn{border:1px solid var(--border2);background:var(--bg3);color:var(--text2);border-radius:7px;padding:6px 14px;font-size:0.75rem;font-weight:600;cursor:pointer;font-family:var(--display);transition:all 0.15s}
+.btn:hover{color:var(--text);background:var(--bg4)}
+.btn.primary{background:linear-gradient(135deg,#22c55e,#4ade80);border-color:transparent;color:#0a1a10}
+.btn.primary:hover{opacity:0.85}
+.gabbox{margin:0.8rem 1rem;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px}
+.gablbl{font-size:0.6rem;font-weight:700;color:var(--text3);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:5px}
+.gabcode{font-family:var(--mono);font-size:0.75rem;color:var(--text2);white-space:pre;line-height:1.6;overflow-x:auto}
+.noch{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--text3);gap:8px;font-size:0.82rem;text-align:center;padding:2rem}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.fi{animation:fadeIn 0.2s ease}
+@media(max-width:768px){
+  .editor-layout{grid-template-columns:1fr;grid-template-rows:auto 1fr auto}
+  .sidebar{grid-row:auto;border-right:none;border-bottom:1px solid var(--border);max-height:200px}
+  .chlayout{grid-template-columns:1fr}
+  .chsb{max-height:220px;border-right:none;border-bottom:1px solid var(--border)}
+  .header{padding:0 1rem;gap:8px}
+  .progress-pill{display:none}
 }
 </style>
 </head>
 <body>
-
 <header class="header">
   <div class="logo">
-    <div class="logo-icon" style="background: linear-gradient(135deg, #4ade80, #a78bfa); font-size:15px;">⚡</div>
-    <span class="logo-text">LeanAcademy<span class="logo-sub" style="color:#4ade80; font-weight:600;"> SQL</span></span>
+    <div class="logo-icon">⚡</div>
+    <span>LeanAcademy<span class="logo-sql"> SQL</span></span>
   </div>
   <div class="header-tabs">
-    <button class="htab active" onclick="switchPanel(&#39;editor&#39;)">Editor</button>
-    <button class="htab" onclick="switchPanel(&#39;data&#39;)">Dados</button>
-    <button class="htab" onclick="switchPanel(&#39;schema&#39;)">Esquema</button>
-    <button class="htab" onclick="switchPanel(&#39;challenges&#39;)">Desafios</button>
+    <button class="htab active" onclick="sw(&#39;editor&#39;)">Editor</button>
+    <button class="htab" onclick="sw(&#39;data&#39;)">Dados</button>
+    <button class="htab" onclick="sw(&#39;schema&#39;)">Esquema</button>
+    <button class="htab" onclick="sw(&#39;challenges&#39;)">Desafios</button>
   </div>
   <div class="progress-pill">
-    <span id="hdr-prog-txt">0/10</span>
-    <div class="pill-bar"><div class="pill-fill" id="hdr-prog-fill" style="width:0%"></div></div>
+    <span id="hprog">0/10</span>
+    <div class="pill-bar"><div class="pill-fill" id="hfill" style="width:0%"></div></div>
   </div>
 </header>
-
 <div class="main">
 
-  <!-- EDITOR PANEL -->
-  <div class="panel active" id="panel-editor">
-    <div class="editor-layout">
-      <aside class="sidebar">
-        <div>
-          <div class="sidebar-section-title">Tabelas</div>
-          <div class="schema-card" onclick="insertTable(&#39;SELECT * FROM produtos&#39;)">
-            <div class="schema-card-title">📦 produtos</div>
-            <div class="schema-col"><span class="pk-badge">PK</span> id_produto</div>
-            <div class="schema-col">nome · preco · estoque</div>
-            <div class="schema-col"><span class="fk-badge">FK</span> id_categoria</div>
-          </div>
-          <div class="schema-card" onclick="insertTable(&#39;SELECT * FROM categorias&#39;)">
-            <div class="schema-card-title">🏷️ categorias</div>
-            <div class="schema-col"><span class="pk-badge">PK</span> id_categoria</div>
-            <div class="schema-col">nome_categoria · descricao</div>
-          </div>
-          <div class="schema-card" onclick="insertTable(&#39;SELECT * FROM clientes&#39;)">
-            <div class="schema-card-title">👤 clientes</div>
-            <div class="schema-col"><span class="pk-badge">PK</span> id_cliente</div>
-            <div class="schema-col">nome · email · cidade</div>
-            <div class="schema-col">data_cadastro</div>
-          </div>
-          <div class="schema-card" onclick="insertTable(&#39;SELECT * FROM pedidos&#39;)">
-            <div class="schema-card-title">🛒 pedidos</div>
-            <div class="schema-col"><span class="pk-badge">PK</span> id_pedido</div>
-            <div class="schema-col"><span class="fk-badge">FK</span> id_cliente</div>
-            <div class="schema-col">data_pedido · status · total</div>
-          </div>
-          <div class="schema-card" onclick="insertTable(&#39;SELECT * FROM itens_pedido&#39;)">
-            <div class="schema-card-title">📋 itens_pedido</div>
-            <div class="schema-col"><span class="pk-badge">PK</span> id_item</div>
-            <div class="schema-col"><span class="fk-badge">FK</span> id_pedido · id_produto</div>
-            <div class="schema-col">quantidade · preco_unit</div>
-          </div>
-        </div>
-        <div>
-          <div class="sidebar-section-title">Exemplos rápidos</div>
-          <div class="quick-section">
-            <button class="quick-btn" onclick="setQ(&#39;SELECT * FROM produtos WHERE preco &gt; 100\nORDER BY preco DESC&#39;)"><span class="quick-tag">WHERE + ORDER</span>produtos acima de R$100</button>
-            <button class="quick-btn" onclick="setQ(&#39;SELECT p.nome, c.nome_categoria\nFROM produtos p\nINNER JOIN categorias c\n  ON p.id_categoria = c.id_categoria&#39;)"><span class="quick-tag">INNER JOIN</span>produto + categoria</button>
-            <button class="quick-btn" onclick="setQ(&#39;SELECT cl.nome,\n  COUNT(pe.id_pedido) AS pedidos,\n  SUM(pe.total) AS gasto\nFROM clientes cl\nLEFT JOIN pedidos pe\n  ON cl.id_cliente = pe.id_cliente\nGROUP BY cl.id_cliente, cl.nome\nORDER BY gasto DESC&#39;)"><span class="quick-tag">LEFT JOIN + GROUP BY</span>gasto por cliente</button>
-            <button class="quick-btn" onclick="setQ(&#39;SELECT c.nome_categoria,\n  COUNT(p.id_produto) AS total,\n  AVG(p.preco) AS preco_medio\nFROM categorias c\nLEFT JOIN produtos p\n  ON c.id_categoria = p.id_categoria\nGROUP BY c.id_categoria, c.nome_categoria\nHAVING COUNT(p.id_produto) &gt; 1\nORDER BY total DESC&#39;)"><span class="quick-tag">GROUP BY + HAVING</span>categorias com +1 produto</button>
-            <button class="quick-btn" onclick="setQ(&#39;SELECT nome, preco FROM produtos\nWHERE preco &gt; (\n  SELECT AVG(preco) FROM produtos\n)\nORDER BY preco DESC&#39;)"><span class="quick-tag">SUBQUERY</span>acima da média de preço</button>
-            <button class="quick-btn" onclick="setQ(&#39;SELECT p.nome,\n  CASE\n    WHEN p.preco &lt; 50 THEN \&#39;barato\&#39;\n    WHEN p.preco &lt; 300 THEN \&#39;médio\&#39;\n    ELSE \&#39;premium\&#39;\n  END AS faixa_preco\nFROM produtos p\nORDER BY p.preco&#39;)"><span class="quick-tag">CASE WHEN</span>classificar por faixa</button>
-            <button class="quick-btn" onclick="setQ(&#39;SELECT p.nome,\n  SUM(ip.quantidade) AS vendidos\nFROM produtos p\nINNER JOIN itens_pedido ip\n  ON p.id_produto = ip.id_produto\nGROUP BY p.id_produto, p.nome\nORDER BY vendidos DESC\nLIMIT 5&#39;)"><span class="quick-tag">RANKING + LIMIT</span>top 5 mais vendidos</button>
-            <button class="quick-btn" onclick="setQ(&#39;SELECT MIN(preco) AS minimo,\n  MAX(preco) AS maximo,\n  AVG(preco) AS media,\n  SUM(preco * estoque) AS valor_estoque\nFROM produtos&#39;)"><span class="quick-tag">AGREGAÇÕES</span>estatísticas de preço</button>
-          </div>
-        </div>
-      </aside>
-
-      <div class="editor-top">
-        <div class="editor-bar">
-          <span class="editor-label">SQL Editor</span>
-          <span class="shortcut-hint">Ctrl+Enter para executar</span>
-          <button class="run-btn" onclick="runQ()">▶ Executar</button>
-        </div>
-        <textarea id="sql-editor" spellcheck="false" placeholder="-- Digite sua query aqui...
-SELECT * FROM produtos">SELECT * FROM produtos</textarea>
+<!-- EDITOR -->
+<div class="panel active" id="panel-editor">
+  <div class="editor-layout">
+    <aside class="sidebar">
+      <div>
+        <div class="stitle">Tabelas</div>
+        <div class="scrd" onclick="setQ(&#39;SELECT * FROM produtos&#39;)"><div class="scrd-title">📦 produtos</div><div class="scrd-col"><span class="pk-c">PK</span> id_produto · nome · preco · estoque</div><div class="scrd-col"><span class="fk-c">FK</span> id_categoria</div></div>
+        <div class="scrd" onclick="setQ(&#39;SELECT * FROM categorias&#39;)"><div class="scrd-title">🏷️ categorias</div><div class="scrd-col"><span class="pk-c">PK</span> id_categoria</div><div class="scrd-col">nome_categoria · descricao</div></div>
+        <div class="scrd" onclick="setQ(&#39;SELECT * FROM clientes&#39;)"><div class="scrd-title">👤 clientes</div><div class="scrd-col"><span class="pk-c">PK</span> id_cliente · nome · email</div><div class="scrd-col">cidade · data_cadastro</div></div>
+        <div class="scrd" onclick="setQ(&#39;SELECT * FROM pedidos&#39;)"><div class="scrd-title">🛒 pedidos</div><div class="scrd-col"><span class="pk-c">PK</span> id_pedido <span class="fk-c">FK</span> id_cliente</div><div class="scrd-col">data_pedido · status · total</div></div>
+        <div class="scrd" onclick="setQ(&#39;SELECT * FROM itens_pedido&#39;)"><div class="scrd-title">📋 itens_pedido</div><div class="scrd-col"><span class="pk-c">PK</span> id_item <span class="fk-c">FK</span> id_pedido · id_produto</div><div class="scrd-col">quantidade · preco_unit</div></div>
       </div>
-
-      <div class="result-bottom">
-        <div class="result-bar">
-          <span class="result-label">Resultado</span>
-          <span id="result-badge"><span class="row-badge ok">12 linhas</span></span>
-        </div>
-        <div class="result-content" id="result-content"><div class="fade-in"><table class="result-table"><thead><tr><th>id_produto</th><th>nome</th><th>preco</th><th>estoque</th><th>id_categoria</th></tr></thead><tbody><tr><td><span class="td-id">1</span></td><td><span class="td-str">Notebook Lenovo</span></td><td><span class="td-num">2499.90</span></td><td><span class="td-num">15</span></td><td><span class="td-id">1</span></td></tr><tr><td><span class="td-id">2</span></td><td><span class="td-str">Smartphone Samsung</span></td><td><span class="td-num">1299</span></td><td><span class="td-num">42</span></td><td><span class="td-id">1</span></td></tr><tr><td><span class="td-id">3</span></td><td><span class="td-str">Fone de Ouvido JBL</span></td><td><span class="td-num">189.90</span></td><td><span class="td-num">80</span></td><td><span class="td-id">1</span></td></tr><tr><td><span class="td-id">4</span></td><td><span class="td-str">Camiseta Polo</span></td><td><span class="td-num">89.90</span></td><td><span class="td-num">200</span></td><td><span class="td-id">2</span></td></tr><tr><td><span class="td-id">5</span></td><td><span class="td-str">Jeans Slim</span></td><td><span class="td-num">149.90</span></td><td><span class="td-num">130</span></td><td><span class="td-id">2</span></td></tr><tr><td><span class="td-id">6</span></td><td><span class="td-str">Tênis Nike</span></td><td><span class="td-num">349.90</span></td><td><span class="td-num">60</span></td><td><span class="td-id">5</span></td></tr><tr><td><span class="td-id">7</span></td><td><span class="td-str">Café Especial 500g</span></td><td><span class="td-num">34.90</span></td><td><span class="td-num">300</span></td><td><span class="td-id">3</span></td></tr><tr><td><span class="td-id">8</span></td><td><span class="td-str">Azeite Extra Virgem</span></td><td><span class="td-num">28.50</span></td><td><span class="td-num">150</span></td><td><span class="td-id">3</span></td></tr><tr><td><span class="td-id">9</span></td><td><span class="td-str">Clean Code</span></td><td><span class="td-num">74.90</span></td><td><span class="td-num">50</span></td><td><span class="td-id">4</span></td></tr><tr><td><span class="td-id">10</span></td><td><span class="td-str">SQL para Iniciantes</span></td><td><span class="td-num">59.90</span></td><td><span class="td-num">75</span></td><td><span class="td-id">4</span></td></tr><tr><td><span class="td-id">11</span></td><td><span class="td-str">Bola de Futebol</span></td><td><span class="td-num">79.90</span></td><td><span class="td-num">40</span></td><td><span class="td-id">5</span></td></tr><tr><td><span class="td-id">12</span></td><td><span class="td-str">Monitor 27"</span></td><td><span class="td-num">1199</span></td><td><span class="td-num">20</span></td><td><span class="td-id">1</span></td></tr></tbody></table></div></div>
+      <div>
+        <div class="stitle">Exemplos rápidos</div>
+        <button class="qbtn" onclick="setQ(&#39;SELECT * FROM produtos\nWHERE preco &gt; 100\nORDER BY preco DESC&#39;)"><span class="qtag">WHERE + ORDER BY</span>produtos acima de R$100</button>
+        <button class="qbtn" onclick="setQ(&#39;SELECT p.nome, c.nome_categoria\nFROM produtos p\nINNER JOIN categorias c\n  ON p.id_categoria = c.id_categoria&#39;)"><span class="qtag">INNER JOIN</span>produto + categoria</button>
+        <button class="qbtn" onclick="setQ(&#39;SELECT cl.nome,\n  COUNT(pe.id_pedido) AS pedidos,\n  SUM(pe.total) AS gasto\nFROM clientes cl\nLEFT JOIN pedidos pe\n  ON cl.id_cliente = pe.id_cliente\nGROUP BY cl.id_cliente, cl.nome\nORDER BY gasto DESC&#39;)"><span class="qtag">LEFT JOIN + GROUP BY</span>gasto total por cliente</button>
+        <button class="qbtn" onclick="setQ(&#39;SELECT c.nome_categoria,\n  COUNT(p.id_produto) AS total,\n  AVG(p.preco) AS preco_medio\nFROM categorias c\nLEFT JOIN produtos p\n  ON c.id_categoria = p.id_categoria\nGROUP BY c.id_categoria, c.nome_categoria\nHAVING COUNT(p.id_produto) &gt; 1\nORDER BY total DESC&#39;)"><span class="qtag">GROUP BY + HAVING</span>categorias com +1 produto</button>
+        <button class="qbtn" onclick="setQ(&#39;SELECT nome, preco\nFROM produtos\nWHERE preco &gt; (\n  SELECT AVG(preco) FROM produtos\n)\nORDER BY preco DESC&#39;)"><span class="qtag">SUBQUERY</span>acima da média de preço</button>
+        <button class="qbtn" onclick="setQ(&#39;SELECT p.nome,\n  CASE\n    WHEN p.preco &lt; 50 THEN \&#39;barato\&#39;\n    WHEN p.preco &lt; 300 THEN \&#39;médio\&#39;\n    ELSE \&#39;premium\&#39;\n  END AS faixa\nFROM produtos p\nORDER BY p.preco&#39;)"><span class="qtag">CASE WHEN</span>classificar por faixa de preço</button>
+        <button class="qbtn" onclick="setQ(&#39;SELECT p.nome, SUM(ip.quantidade) AS vendidos\nFROM produtos p\nINNER JOIN itens_pedido ip\n  ON p.id_produto = ip.id_produto\nGROUP BY p.id_produto, p.nome\nORDER BY vendidos DESC\nLIMIT 5&#39;)"><span class="qtag">RANKING + LIMIT</span>top 5 mais vendidos</button>
+        <button class="qbtn" onclick="setQ(&#39;SELECT MIN(preco) AS minimo, MAX(preco) AS maximo,\n  AVG(preco) AS media, COUNT(*) AS total\nFROM produtos&#39;)"><span class="qtag">AGREGAÇÕES</span>estatísticas de preço</button>
       </div>
+    </aside>
+    <div class="editor-top">
+      <div class="editor-bar">
+        <span class="elbl">SQL Editor</span>
+        <span class="shint">Ctrl+Enter para executar</span>
+        <button class="run-btn" onclick="runQ()">▶ Executar</button>
+      </div>
+      <textarea id="sqled" spellcheck="false" placeholder="-- Digite sua query aqui...">SELECT * FROM produtos</textarea>
+    </div>
+    <div class="result-bottom">
+      <div class="result-bar"><span class="rlbl">Resultado</span><span id="rbadge"><span class="rbadge ok">12 linhas</span></span></div>
+      <div class="rcontent" id="rcontent"><div class="fi"><table class="rtbl"><thead><tr><th>id_produto</th><th>nome</th><th>preco</th><th>estoque</th><th>id_categoria</th></tr></thead><tbody><tr><td><span class="nid">1</span></td><td><span class="nstr">Notebook Lenovo</span></td><td><span class="nnum">2499.90</span></td><td><span class="nnum">15</span></td><td><span class="nid">1</span></td></tr><tr><td><span class="nid">2</span></td><td><span class="nstr">Smartphone Samsung</span></td><td><span class="nnum">1299</span></td><td><span class="nnum">42</span></td><td><span class="nid">1</span></td></tr><tr><td><span class="nid">3</span></td><td><span class="nstr">Fone de Ouvido JBL</span></td><td><span class="nnum">189.90</span></td><td><span class="nnum">80</span></td><td><span class="nid">1</span></td></tr><tr><td><span class="nid">4</span></td><td><span class="nstr">Camiseta Polo</span></td><td><span class="nnum">89.90</span></td><td><span class="nnum">200</span></td><td><span class="nid">2</span></td></tr><tr><td><span class="nid">5</span></td><td><span class="nstr">Jeans Slim</span></td><td><span class="nnum">149.90</span></td><td><span class="nnum">130</span></td><td><span class="nid">2</span></td></tr><tr><td><span class="nid">6</span></td><td><span class="nstr">Tênis Nike</span></td><td><span class="nnum">349.90</span></td><td><span class="nnum">60</span></td><td><span class="nid">5</span></td></tr><tr><td><span class="nid">7</span></td><td><span class="nstr">Café Especial 500g</span></td><td><span class="nnum">34.90</span></td><td><span class="nnum">300</span></td><td><span class="nid">3</span></td></tr><tr><td><span class="nid">8</span></td><td><span class="nstr">Azeite Extra Virgem</span></td><td><span class="nnum">28.50</span></td><td><span class="nnum">150</span></td><td><span class="nid">3</span></td></tr><tr><td><span class="nid">9</span></td><td><span class="nstr">Clean Code</span></td><td><span class="nnum">74.90</span></td><td><span class="nnum">50</span></td><td><span class="nid">4</span></td></tr><tr><td><span class="nid">10</span></td><td><span class="nstr">SQL para Iniciantes</span></td><td><span class="nnum">59.90</span></td><td><span class="nnum">75</span></td><td><span class="nid">4</span></td></tr><tr><td><span class="nid">11</span></td><td><span class="nstr">Bola de Futebol</span></td><td><span class="nnum">79.90</span></td><td><span class="nnum">40</span></td><td><span class="nid">5</span></td></tr><tr><td><span class="nid">12</span></td><td><span class="nstr">Monitor 27"</span></td><td><span class="nnum">1199</span></td><td><span class="nnum">20</span></td><td><span class="nid">1</span></td></tr></tbody></table></div></div>
     </div>
   </div>
-
-  <!-- DATA PANEL -->
-  <div class="panel" id="panel-data">
-    <div class="data-panel-inner">
-      <div class="data-tabs-bar">
-        <button class="data-tab active" onclick="showDataTable(&#39;produtos&#39;, this)">📦 produtos</button>
-        <button class="data-tab" onclick="showDataTable(&#39;categorias&#39;, this)">🏷️ categorias</button>
-        <button class="data-tab" onclick="showDataTable(&#39;clientes&#39;, this)">👤 clientes</button>
-        <button class="data-tab" onclick="showDataTable(&#39;pedidos&#39;, this)">🛒 pedidos</button>
-        <button class="data-tab" onclick="showDataTable(&#39;itens_pedido&#39;, this)">📋 itens_pedido</button>
-      </div>
-      <div class="data-table-wrap" id="data-display"><div class="fade-in"><table class="data-table"><thead><tr><th>id_produto</th><th>nome</th><th>preco</th><th>estoque</th><th>id_categoria</th></tr></thead><tbody><tr><td><span class="td-id">1</span></td><td><span class="td-str">Notebook Lenovo</span></td><td><span class="td-num">2499.90</span></td><td><span class="td-num">15</span></td><td><span class="td-id">1</span></td></tr><tr><td><span class="td-id">2</span></td><td><span class="td-str">Smartphone Samsung</span></td><td><span class="td-num">1299</span></td><td><span class="td-num">42</span></td><td><span class="td-id">1</span></td></tr><tr><td><span class="td-id">3</span></td><td><span class="td-str">Fone de Ouvido JBL</span></td><td><span class="td-num">189.90</span></td><td><span class="td-num">80</span></td><td><span class="td-id">1</span></td></tr><tr><td><span class="td-id">4</span></td><td><span class="td-str">Camiseta Polo</span></td><td><span class="td-num">89.90</span></td><td><span class="td-num">200</span></td><td><span class="td-id">2</span></td></tr><tr><td><span class="td-id">5</span></td><td><span class="td-str">Jeans Slim</span></td><td><span class="td-num">149.90</span></td><td><span class="td-num">130</span></td><td><span class="td-id">2</span></td></tr><tr><td><span class="td-id">6</span></td><td><span class="td-str">Tênis Nike</span></td><td><span class="td-num">349.90</span></td><td><span class="td-num">60</span></td><td><span class="td-id">5</span></td></tr><tr><td><span class="td-id">7</span></td><td><span class="td-str">Café Especial 500g</span></td><td><span class="td-num">34.90</span></td><td><span class="td-num">300</span></td><td><span class="td-id">3</span></td></tr><tr><td><span class="td-id">8</span></td><td><span class="td-str">Azeite Extra Virgem</span></td><td><span class="td-num">28.50</span></td><td><span class="td-num">150</span></td><td><span class="td-id">3</span></td></tr><tr><td><span class="td-id">9</span></td><td><span class="td-str">Clean Code</span></td><td><span class="td-num">74.90</span></td><td><span class="td-num">50</span></td><td><span class="td-id">4</span></td></tr><tr><td><span class="td-id">10</span></td><td><span class="td-str">SQL para Iniciantes</span></td><td><span class="td-num">59.90</span></td><td><span class="td-num">75</span></td><td><span class="td-id">4</span></td></tr><tr><td><span class="td-id">11</span></td><td><span class="td-str">Bola de Futebol</span></td><td><span class="td-num">79.90</span></td><td><span class="td-num">40</span></td><td><span class="td-id">5</span></td></tr><tr><td><span class="td-id">12</span></td><td><span class="td-str">Monitor 27"</span></td><td><span class="td-num">1199</span></td><td><span class="td-num">20</span></td><td><span class="td-id">1</span></td></tr></tbody></table></div></div>
-    </div>
-  </div>
-
-  <!-- SCHEMA PANEL -->
-  <div class="panel" id="panel-schema">
-    <div class="schema-panel-inner">
-      <h2>Esquema do banco</h2>
-      <p>Estrutura completa das tabelas, tipos e relações.</p>
-      <div class="schema-grid">
-        <div class="schema-full-card">
-          <div class="schema-full-card-header">📦 produtos</div>
-          <div class="schema-full-card-body">
-            <div class="schema-field"><span class="field-name">id_produto</span><span class="field-type">INT</span><span class="field-badge pk">PK</span></div>
-            <div class="schema-field"><span class="field-name">nome</span><span class="field-type">VARCHAR</span></div>
-            <div class="schema-field"><span class="field-name">preco</span><span class="field-type">DECIMAL</span></div>
-            <div class="schema-field"><span class="field-name">estoque</span><span class="field-type">INT</span></div>
-            <div class="schema-field"><span class="field-name">id_categoria</span><span class="field-type">INT</span><span class="field-badge fk">FK</span></div>
-          </div>
-        </div>
-        <div class="schema-full-card">
-          <div class="schema-full-card-header">🏷️ categorias</div>
-          <div class="schema-full-card-body">
-            <div class="schema-field"><span class="field-name">id_categoria</span><span class="field-type">INT</span><span class="field-badge pk">PK</span></div>
-            <div class="schema-field"><span class="field-name">nome_categoria</span><span class="field-type">VARCHAR</span></div>
-            <div class="schema-field"><span class="field-name">descricao</span><span class="field-type">VARCHAR</span></div>
-          </div>
-        </div>
-        <div class="schema-full-card">
-          <div class="schema-full-card-header">👤 clientes</div>
-          <div class="schema-full-card-body">
-            <div class="schema-field"><span class="field-name">id_cliente</span><span class="field-type">INT</span><span class="field-badge pk">PK</span></div>
-            <div class="schema-field"><span class="field-name">nome</span><span class="field-type">VARCHAR</span></div>
-            <div class="schema-field"><span class="field-name">email</span><span class="field-type">VARCHAR</span></div>
-            <div class="schema-field"><span class="field-name">cidade</span><span class="field-type">VARCHAR</span></div>
-            <div class="schema-field"><span class="field-name">data_cadastro</span><span class="field-type">DATE</span></div>
-          </div>
-        </div>
-        <div class="schema-full-card">
-          <div class="schema-full-card-header">🛒 pedidos</div>
-          <div class="schema-full-card-body">
-            <div class="schema-field"><span class="field-name">id_pedido</span><span class="field-type">INT</span><span class="field-badge pk">PK</span></div>
-            <div class="schema-field"><span class="field-name">id_cliente</span><span class="field-type">INT</span><span class="field-badge fk">FK</span></div>
-            <div class="schema-field"><span class="field-name">data_pedido</span><span class="field-type">DATE</span></div>
-            <div class="schema-field"><span class="field-name">status</span><span class="field-type">VARCHAR</span></div>
-            <div class="schema-field"><span class="field-name">total</span><span class="field-type">DECIMAL</span></div>
-          </div>
-        </div>
-        <div class="schema-full-card">
-          <div class="schema-full-card-header">📋 itens_pedido</div>
-          <div class="schema-full-card-body">
-            <div class="schema-field"><span class="field-name">id_item</span><span class="field-type">INT</span><span class="field-badge pk">PK</span></div>
-            <div class="schema-field"><span class="field-name">id_pedido</span><span class="field-type">INT</span><span class="field-badge fk">FK</span></div>
-            <div class="schema-field"><span class="field-name">id_produto</span><span class="field-type">INT</span><span class="field-badge fk">FK</span></div>
-            <div class="schema-field"><span class="field-name">quantidade</span><span class="field-type">INT</span></div>
-            <div class="schema-field"><span class="field-name">preco_unit</span><span class="field-type">DECIMAL</span></div>
-          </div>
-        </div>
-      </div>
-      <div class="relations-box">
-        <h3>Relações</h3>
-        <div class="relation-row">
-          <span class="rel-table">categorias</span>
-          <span class="rel-type">1 → N</span>
-          <span class="rel-table">produtos</span>
-          <span class="rel-via">via id_categoria</span>
-        </div>
-        <div class="relation-row">
-          <span class="rel-table">clientes</span>
-          <span class="rel-type">1 → N</span>
-          <span class="rel-table">pedidos</span>
-          <span class="rel-via">via id_cliente</span>
-        </div>
-        <div class="relation-row">
-          <span class="rel-table">pedidos</span>
-          <span class="rel-type">1 → N</span>
-          <span class="rel-table">itens_pedido</span>
-          <span class="rel-via">via id_pedido</span>
-        </div>
-        <div class="relation-row">
-          <span class="rel-table">produtos</span>
-          <span class="rel-type">1 → N</span>
-          <span class="rel-table">itens_pedido</span>
-          <span class="rel-via">via id_produto</span>
-        </div>
-        <div class="relation-row">
-          <span class="rel-table">pedidos</span>
-          <span class="rel-type">N ↔ N</span>
-          <span class="rel-table">produtos</span>
-          <span class="rel-via">via itens_pedido</span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- CHALLENGES PANEL -->
-  <div class="panel" id="panel-challenges">
-    <div class="challenges-layout">
-      <div class="ch-list-sidebar">
-        <div class="ch-list-header">
-          <h2>Desafios</h2>
-          <p id="ch-hdr-txt">0 de 10 concluídos</p>
-          <div class="ch-progress-bar"><div class="ch-progress-fill" id="ch-prog-fill" style="width:0%"></div></div>
-        </div>
-        <div id="ch-list-items"><div class="ch-item" id="ch-list-item-1"><span class="ch-status-icon">⬜</span><div class="ch-info"><div class="ch-item-title">1. Liste todos os produtos</div><div class="ch-item-lvl" style="color:#3ecf8e">Iniciante</div></div></div><div class="ch-item" id="ch-list-item-2"><span class="ch-status-icon">⬜</span><div class="ch-info"><div class="ch-item-title">2. Produtos acima de R$ 100</div><div class="ch-item-lvl" style="color:#3ecf8e">Iniciante</div></div></div><div class="ch-item" id="ch-list-item-3"><span class="ch-status-icon">⬜</span><div class="ch-info"><div class="ch-item-title">3. Clientes por cidade</div><div class="ch-item-lvl" style="color:#3ecf8e">Iniciante</div></div></div><div class="ch-item" id="ch-list-item-4"><span class="ch-status-icon">⬜</span><div class="ch-info"><div class="ch-item-title">4. Produto com sua categoria</div><div class="ch-item-lvl" style="color:#fbbf24">Intermediário</div></div></div><div class="ch-item" id="ch-list-item-5"><span class="ch-status-icon">⬜</span><div class="ch-info"><div class="ch-item-title">5. Clientes sem pedidos (LEFT JOIN)</div><div class="ch-item-lvl" style="color:#fbbf24">Intermediário</div></div></div><div class="ch-item" id="ch-list-item-6"><span class="ch-status-icon">⬜</span><div class="ch-info"><div class="ch-item-title">6. Categorias com mais de 2 produtos</div><div class="ch-item-lvl" style="color:#fbbf24">Intermediário</div></div></div><div class="ch-item" id="ch-list-item-7"><span class="ch-status-icon">⬜</span><div class="ch-info"><div class="ch-item-title">7. Produtos mais caros que a média</div><div class="ch-item-lvl" style="color:#6c8eff">Avançado</div></div></div><div class="ch-item" id="ch-list-item-8"><span class="ch-status-icon">⬜</span><div class="ch-info"><div class="ch-item-title">8. Relatório de vendas por cliente</div><div class="ch-item-lvl" style="color:#6c8eff">Avançado</div></div></div><div class="ch-item" id="ch-list-item-9"><span class="ch-status-icon">⬜</span><div class="ch-info"><div class="ch-item-title">9. Top 3 produtos mais vendidos</div><div class="ch-item-lvl" style="color:#6c8eff">Avançado</div></div></div><div class="ch-item" id="ch-list-item-10"><span class="ch-status-icon">⬜</span><div class="ch-info"><div class="ch-item-title">10. Ticket médio por categoria</div><div class="ch-item-lvl" style="color:#a78bfa">Expert</div></div></div></div>
-      </div>
-      <div class="ch-main" id="ch-main">
-        <div class="no-challenge">
-          <div style="font-size:2.5rem;opacity:0.2">🎯</div>
-          <span>Selecione um desafio para começar</span>
-        </div>
-      </div>
-    </div>
-  </div>
-
 </div>
 
-<script src="./Index_files/alasql.min.js.download"></script>
-<script>
-var dbReady = false;
-var solved = {};
-var currentChallenge = null;
+<!-- DATA -->
+<div class="panel" id="panel-data">
+  <div class="data-pi">
+    <div class="dtabs">
+      <button class="dtab active" onclick="showDT(&#39;produtos&#39;,this)">📦 produtos</button>
+      <button class="dtab" onclick="showDT(&#39;categorias&#39;,this)">🏷️ categorias</button>
+      <button class="dtab" onclick="showDT(&#39;clientes&#39;,this)">👤 clientes</button>
+      <button class="dtab" onclick="showDT(&#39;pedidos&#39;,this)">🛒 pedidos</button>
+      <button class="dtab" onclick="showDT(&#39;itens_pedido&#39;,this)">📋 itens_pedido</button>
+    </div>
+    <div class="dtw" id="dtdisp"><div class="fi"><table class="dttbl"><thead><tr><th>id_produto</th><th>nome</th><th>preco</th><th>estoque</th><th>id_categoria</th></tr></thead><tbody><tr><td><span class="nid">1</span></td><td><span class="nstr">Notebook Lenovo</span></td><td><span class="nnum">2499.90</span></td><td><span class="nnum">15</span></td><td><span class="nid">1</span></td></tr><tr><td><span class="nid">2</span></td><td><span class="nstr">Smartphone Samsung</span></td><td><span class="nnum">1299</span></td><td><span class="nnum">42</span></td><td><span class="nid">1</span></td></tr><tr><td><span class="nid">3</span></td><td><span class="nstr">Fone de Ouvido JBL</span></td><td><span class="nnum">189.90</span></td><td><span class="nnum">80</span></td><td><span class="nid">1</span></td></tr><tr><td><span class="nid">4</span></td><td><span class="nstr">Camiseta Polo</span></td><td><span class="nnum">89.90</span></td><td><span class="nnum">200</span></td><td><span class="nid">2</span></td></tr><tr><td><span class="nid">5</span></td><td><span class="nstr">Jeans Slim</span></td><td><span class="nnum">149.90</span></td><td><span class="nnum">130</span></td><td><span class="nid">2</span></td></tr><tr><td><span class="nid">6</span></td><td><span class="nstr">Tênis Nike</span></td><td><span class="nnum">349.90</span></td><td><span class="nnum">60</span></td><td><span class="nid">5</span></td></tr><tr><td><span class="nid">7</span></td><td><span class="nstr">Café Especial 500g</span></td><td><span class="nnum">34.90</span></td><td><span class="nnum">300</span></td><td><span class="nid">3</span></td></tr><tr><td><span class="nid">8</span></td><td><span class="nstr">Azeite Extra Virgem</span></td><td><span class="nnum">28.50</span></td><td><span class="nnum">150</span></td><td><span class="nid">3</span></td></tr><tr><td><span class="nid">9</span></td><td><span class="nstr">Clean Code</span></td><td><span class="nnum">74.90</span></td><td><span class="nnum">50</span></td><td><span class="nid">4</span></td></tr><tr><td><span class="nid">10</span></td><td><span class="nstr">SQL para Iniciantes</span></td><td><span class="nnum">59.90</span></td><td><span class="nnum">75</span></td><td><span class="nid">4</span></td></tr><tr><td><span class="nid">11</span></td><td><span class="nstr">Bola de Futebol</span></td><td><span class="nnum">79.90</span></td><td><span class="nnum">40</span></td><td><span class="nid">5</span></td></tr><tr><td><span class="nid">12</span></td><td><span class="nstr">Monitor 27"</span></td><td><span class="nnum">1199</span></td><td><span class="nnum">20</span></td><td><span class="nid">1</span></td></tr></tbody></table></div></div>
+  </div>
+</div>
 
-var DATA = {
-  produtos:[
-    {id_produto:1,nome:'Notebook Lenovo',preco:2499.90,estoque:15,id_categoria:1},
-    {id_produto:2,nome:'Smartphone Samsung',preco:1299.00,estoque:42,id_categoria:1},
-    {id_produto:3,nome:'Fone de Ouvido JBL',preco:189.90,estoque:80,id_categoria:1},
-    {id_produto:4,nome:'Camiseta Polo',preco:89.90,estoque:200,id_categoria:2},
-    {id_produto:5,nome:'Jeans Slim',preco:149.90,estoque:130,id_categoria:2},
-    {id_produto:6,nome:'Tênis Nike',preco:349.90,estoque:60,id_categoria:5},
-    {id_produto:7,nome:'Café Especial 500g',preco:34.90,estoque:300,id_categoria:3},
-    {id_produto:8,nome:'Azeite Extra Virgem',preco:28.50,estoque:150,id_categoria:3},
-    {id_produto:9,nome:'Clean Code',preco:74.90,estoque:50,id_categoria:4},
-    {id_produto:10,nome:'SQL para Iniciantes',preco:59.90,estoque:75,id_categoria:4},
-    {id_produto:11,nome:'Bola de Futebol',preco:79.90,estoque:40,id_categoria:5},
-    {id_produto:12,nome:'Monitor 27"',preco:1199.00,estoque:20,id_categoria:1}
-  ],
-  categorias:[
-    {id_categoria:1,nome_categoria:'Eletrônicos',descricao:'Produtos eletrônicos e gadgets'},
-    {id_categoria:2,nome_categoria:'Roupas',descricao:'Vestuário e acessórios'},
-    {id_categoria:3,nome_categoria:'Alimentos',descricao:'Alimentos e bebidas'},
-    {id_categoria:4,nome_categoria:'Livros',descricao:'Livros e materiais educativos'},
-    {id_categoria:5,nome_categoria:'Esportes',descricao:'Artigos esportivos'}
-  ],
-  clientes:[
-    {id_cliente:1,nome:'Ana Souza',email:'ana@email.com',cidade:'São Paulo',data_cadastro:'2022-03-10'},
-    {id_cliente:2,nome:'Carlos Lima',email:'carlos@email.com',cidade:'Rio de Janeiro',data_cadastro:'2022-07-15'},
-    {id_cliente:3,nome:'Mariana Costa',email:'mari@email.com',cidade:'Curitiba',data_cadastro:'2023-01-20'},
-    {id_cliente:4,nome:'Pedro Alves',email:'pedro@email.com',cidade:'São Paulo',data_cadastro:'2023-04-05'},
-    {id_cliente:5,nome:'Juliana Ferreira',email:'ju@email.com',cidade:'Belo Horizonte',data_cadastro:'2023-06-18'},
-    {id_cliente:6,nome:'Rafael Santos',email:'rafa@email.com',cidade:'Porto Alegre',data_cadastro:'2024-01-09'},
-    {id_cliente:7,nome:'Lucia Mendes',email:'lucia@email.com',cidade:'São Paulo',data_cadastro:'2024-02-28'}
-  ],
-  pedidos:[
-    {id_pedido:1,id_cliente:1,data_pedido:'2024-01-10',status:'entregue',total:2689.80},
-    {id_pedido:2,id_cliente:1,data_pedido:'2024-03-22',status:'entregue',total:189.90},
-    {id_pedido:3,id_cliente:2,data_pedido:'2024-02-14',status:'entregue',total:439.80},
-    {id_pedido:4,id_cliente:3,data_pedido:'2024-04-01',status:'em andamento',total:1299.00},
-    {id_pedido:5,id_cliente:4,data_pedido:'2024-04-15',status:'cancelado',total:74.90},
-    {id_pedido:6,id_cliente:5,data_pedido:'2024-05-02',status:'entregue',total:1548.90},
-    {id_pedido:7,id_cliente:6,data_pedido:'2024-05-20',status:'em andamento',total:229.80},
-    {id_pedido:8,id_cliente:1,data_pedido:'2024-06-01',status:'entregue',total:59.90}
-  ],
-  itens_pedido:[
-    {id_item:1,id_pedido:1,id_produto:1,quantidade:1,preco_unit:2499.90},
-    {id_item:2,id_pedido:1,id_produto:7,quantidade:2,preco_unit:34.90},
-    {id_item:3,id_pedido:2,id_produto:3,quantidade:1,preco_unit:189.90},
-    {id_item:4,id_pedido:3,id_produto:6,quantidade:1,preco_unit:349.90},
-    {id_item:5,id_pedido:3,id_produto:11,quantidade:1,preco_unit:79.90},
-    {id_item:6,id_pedido:4,id_produto:2,quantidade:1,preco_unit:1299.00},
-    {id_item:7,id_pedido:5,id_produto:9,quantidade:1,preco_unit:74.90},
-    {id_item:8,id_pedido:6,id_produto:12,quantidade:1,preco_unit:1199.00},
-    {id_item:9,id_pedido:6,id_produto:4,quantidade:2,preco_unit:89.90},
-    {id_item:10,id_pedido:7,id_produto:10,quantidade:1,preco_unit:59.90},
-    {id_item:11,id_pedido:7,id_produto:8,quantidade:3,preco_unit:28.50},
-    {id_item:12,id_pedido:8,id_produto:10,quantidade:1,preco_unit:59.90}
-  ]
+<!-- SCHEMA -->
+<div class="panel" id="panel-schema">
+  <div class="spi">
+    <h2>Esquema do banco</h2>
+    <p>Estrutura completa das tabelas, tipos e relações.</p>
+    <div class="sgrid">
+      <div class="sfc"><div class="sfch">📦 produtos</div><div class="sff"><span class="fn">id_produto</span><span class="ft">INT</span><span class="fb pk">PK</span></div><div class="sff"><span class="fn">nome</span><span class="ft">VARCHAR</span></div><div class="sff"><span class="fn">preco</span><span class="ft">DECIMAL</span></div><div class="sff"><span class="fn">estoque</span><span class="ft">INT</span></div><div class="sff"><span class="fn">id_categoria</span><span class="ft">INT</span><span class="fb fk">FK</span></div></div>
+      <div class="sfc"><div class="sfch">🏷️ categorias</div><div class="sff"><span class="fn">id_categoria</span><span class="ft">INT</span><span class="fb pk">PK</span></div><div class="sff"><span class="fn">nome_categoria</span><span class="ft">VARCHAR</span></div><div class="sff"><span class="fn">descricao</span><span class="ft">VARCHAR</span></div></div>
+      <div class="sfc"><div class="sfch">👤 clientes</div><div class="sff"><span class="fn">id_cliente</span><span class="ft">INT</span><span class="fb pk">PK</span></div><div class="sff"><span class="fn">nome</span><span class="ft">VARCHAR</span></div><div class="sff"><span class="fn">email</span><span class="ft">VARCHAR</span></div><div class="sff"><span class="fn">cidade</span><span class="ft">VARCHAR</span></div><div class="sff"><span class="fn">data_cadastro</span><span class="ft">DATE</span></div></div>
+      <div class="sfc"><div class="sfch">🛒 pedidos</div><div class="sff"><span class="fn">id_pedido</span><span class="ft">INT</span><span class="fb pk">PK</span></div><div class="sff"><span class="fn">id_cliente</span><span class="ft">INT</span><span class="fb fk">FK</span></div><div class="sff"><span class="fn">data_pedido</span><span class="ft">DATE</span></div><div class="sff"><span class="fn">status</span><span class="ft">VARCHAR</span></div><div class="sff"><span class="fn">total</span><span class="ft">DECIMAL</span></div></div>
+      <div class="sfc"><div class="sfch">📋 itens_pedido</div><div class="sff"><span class="fn">id_item</span><span class="ft">INT</span><span class="fb pk">PK</span></div><div class="sff"><span class="fn">id_pedido</span><span class="ft">INT</span><span class="fb fk">FK</span></div><div class="sff"><span class="fn">id_produto</span><span class="ft">INT</span><span class="fb fk">FK</span></div><div class="sff"><span class="fn">quantidade</span><span class="ft">INT</span></div><div class="sff"><span class="fn">preco_unit</span><span class="ft">DECIMAL</span></div></div>
+    </div>
+    <div class="relbox"><h3>Relações</h3>
+      <div class="relrow"><span class="rt">categorias</span><span class="rtype">1 → N</span><span class="rt">produtos</span><span class="rvia">via id_categoria</span></div>
+      <div class="relrow"><span class="rt">clientes</span><span class="rtype">1 → N</span><span class="rt">pedidos</span><span class="rvia">via id_cliente</span></div>
+      <div class="relrow"><span class="rt">pedidos</span><span class="rtype">1 → N</span><span class="rt">itens_pedido</span><span class="rvia">via id_pedido</span></div>
+      <div class="relrow"><span class="rt">produtos</span><span class="rtype">1 → N</span><span class="rt">itens_pedido</span><span class="rvia">via id_produto</span></div>
+      <div class="relrow"><span class="rt">pedidos</span><span class="rtype">N ↔ N</span><span class="rt">produtos</span><span class="rvia">via itens_pedido</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- CHALLENGES -->
+<div class="panel" id="panel-challenges">
+  <div class="chlayout">
+    <div class="chsb">
+      <div class="chsbh"><h2>Desafios</h2><p id="chtxt">0 de 10 concluídos</p><div class="chpb"><div class="chpf" id="chpf" style="width:0%"></div></div></div>
+      <div id="chlist"><div class="chitem" id="chi-1"><span style="font-size:1rem;flex-shrink:0">⬜</span><div style="flex:1;min-width:0"><div class="chit">1. Liste todos os produtos</div><div class="chilv" style="color:#4ade80">Iniciante</div></div></div><div class="chitem" id="chi-2"><span style="font-size:1rem;flex-shrink:0">⬜</span><div style="flex:1;min-width:0"><div class="chit">2. Produtos acima de R$ 100</div><div class="chilv" style="color:#4ade80">Iniciante</div></div></div><div class="chitem" id="chi-3"><span style="font-size:1rem;flex-shrink:0">⬜</span><div style="flex:1;min-width:0"><div class="chit">3. Clientes por cidade</div><div class="chilv" style="color:#4ade80">Iniciante</div></div></div><div class="chitem" id="chi-4"><span style="font-size:1rem;flex-shrink:0">⬜</span><div style="flex:1;min-width:0"><div class="chit">4. Produto com sua categoria</div><div class="chilv" style="color:#fbbf24">Intermediário</div></div></div><div class="chitem" id="chi-5"><span style="font-size:1rem;flex-shrink:0">⬜</span><div style="flex:1;min-width:0"><div class="chit">5. Clientes sem pedidos (LEFT JOIN)</div><div class="chilv" style="color:#fbbf24">Intermediário</div></div></div><div class="chitem" id="chi-6"><span style="font-size:1rem;flex-shrink:0">⬜</span><div style="flex:1;min-width:0"><div class="chit">6. Categorias com mais de 2 produtos</div><div class="chilv" style="color:#fbbf24">Intermediário</div></div></div><div class="chitem" id="chi-7"><span style="font-size:1rem;flex-shrink:0">⬜</span><div style="flex:1;min-width:0"><div class="chit">7. Produtos mais caros que a média</div><div class="chilv" style="color:#a78bfa">Avançado</div></div></div><div class="chitem" id="chi-8"><span style="font-size:1rem;flex-shrink:0">⬜</span><div style="flex:1;min-width:0"><div class="chit">8. Relatório de vendas por cliente</div><div class="chilv" style="color:#a78bfa">Avançado</div></div></div><div class="chitem" id="chi-9"><span style="font-size:1rem;flex-shrink:0">⬜</span><div style="flex:1;min-width:0"><div class="chit">9. Top 3 produtos mais vendidos</div><div class="chilv" style="color:#a78bfa">Avançado</div></div></div><div class="chitem" id="chi-10"><span style="font-size:1rem;flex-shrink:0">⬜</span><div style="flex:1;min-width:0"><div class="chit">10. Ticket médio por categoria</div><div class="chilv" style="color:#f87272">Expert</div></div></div></div>
+    </div>
+    <div class="chmain" id="chmain"><div class="noch"><div style="font-size:2.5rem;opacity:0.2">🎯</div><span>Selecione um desafio para começar</span></div></div>
+  </div>
+</div>
+
+</div>
+<script>
+// ── DATABASE ──────────────────────────────────────────────────────────────
+var DB={
+  categorias:[{id_categoria:1,nome_categoria:'Eletrônicos',descricao:'Produtos eletrônicos e gadgets'},{id_categoria:2,nome_categoria:'Roupas',descricao:'Vestuário e acessórios'},{id_categoria:3,nome_categoria:'Alimentos',descricao:'Alimentos e bebidas'},{id_categoria:4,nome_categoria:'Livros',descricao:'Livros e materiais educativos'},{id_categoria:5,nome_categoria:'Esportes',descricao:'Artigos esportivos'}],
+  produtos:[{id_produto:1,nome:'Notebook Lenovo',preco:2499.90,estoque:15,id_categoria:1},{id_produto:2,nome:'Smartphone Samsung',preco:1299.00,estoque:42,id_categoria:1},{id_produto:3,nome:'Fone de Ouvido JBL',preco:189.90,estoque:80,id_categoria:1},{id_produto:4,nome:'Camiseta Polo',preco:89.90,estoque:200,id_categoria:2},{id_produto:5,nome:'Jeans Slim',preco:149.90,estoque:130,id_categoria:2},{id_produto:6,nome:'Tênis Nike',preco:349.90,estoque:60,id_categoria:5},{id_produto:7,nome:'Café Especial 500g',preco:34.90,estoque:300,id_categoria:3},{id_produto:8,nome:'Azeite Extra Virgem',preco:28.50,estoque:150,id_categoria:3},{id_produto:9,nome:'Clean Code',preco:74.90,estoque:50,id_categoria:4},{id_produto:10,nome:'SQL para Iniciantes',preco:59.90,estoque:75,id_categoria:4},{id_produto:11,nome:'Bola de Futebol',preco:79.90,estoque:40,id_categoria:5},{id_produto:12,nome:'Monitor 27"',preco:1199.00,estoque:20,id_categoria:1}],
+  clientes:[{id_cliente:1,nome:'Ana Souza',email:'ana@email.com',cidade:'São Paulo',data_cadastro:'2022-03-10'},{id_cliente:2,nome:'Carlos Lima',email:'carlos@email.com',cidade:'Rio de Janeiro',data_cadastro:'2022-07-15'},{id_cliente:3,nome:'Mariana Costa',email:'mari@email.com',cidade:'Curitiba',data_cadastro:'2023-01-20'},{id_cliente:4,nome:'Pedro Alves',email:'pedro@email.com',cidade:'São Paulo',data_cadastro:'2023-04-05'},{id_cliente:5,nome:'Juliana Ferreira',email:'ju@email.com',cidade:'Belo Horizonte',data_cadastro:'2023-06-18'},{id_cliente:6,nome:'Rafael Santos',email:'rafa@email.com',cidade:'Porto Alegre',data_cadastro:'2024-01-09'},{id_cliente:7,nome:'Lucia Mendes',email:'lucia@email.com',cidade:'São Paulo',data_cadastro:'2024-02-28'}],
+  pedidos:[{id_pedido:1,id_cliente:1,data_pedido:'2024-01-10',status:'entregue',total:2689.80},{id_pedido:2,id_cliente:1,data_pedido:'2024-03-22',status:'entregue',total:189.90},{id_pedido:3,id_cliente:2,data_pedido:'2024-02-14',status:'entregue',total:439.80},{id_pedido:4,id_cliente:3,data_pedido:'2024-04-01',status:'em andamento',total:1299.00},{id_pedido:5,id_cliente:4,data_pedido:'2024-04-15',status:'cancelado',total:74.90},{id_pedido:6,id_cliente:5,data_pedido:'2024-05-02',status:'entregue',total:1548.90},{id_pedido:7,id_cliente:6,data_pedido:'2024-05-20',status:'em andamento',total:229.80},{id_pedido:8,id_cliente:1,data_pedido:'2024-06-01',status:'entregue',total:59.90}],
+  itens_pedido:[{id_item:1,id_pedido:1,id_produto:1,quantidade:1,preco_unit:2499.90},{id_item:2,id_pedido:1,id_produto:7,quantidade:2,preco_unit:34.90},{id_item:3,id_pedido:2,id_produto:3,quantidade:1,preco_unit:189.90},{id_item:4,id_pedido:3,id_produto:6,quantidade:1,preco_unit:349.90},{id_item:5,id_pedido:3,id_produto:11,quantidade:1,preco_unit:79.90},{id_item:6,id_pedido:4,id_produto:2,quantidade:1,preco_unit:1299.00},{id_item:7,id_pedido:5,id_produto:9,quantidade:1,preco_unit:74.90},{id_item:8,id_pedido:6,id_produto:12,quantidade:1,preco_unit:1199.00},{id_item:9,id_pedido:6,id_produto:4,quantidade:2,preco_unit:89.90},{id_item:10,id_pedido:7,id_produto:10,quantidade:1,preco_unit:59.90},{id_item:11,id_pedido:7,id_produto:8,quantidade:3,preco_unit:28.50},{id_item:12,id_pedido:8,id_produto:10,quantidade:1,preco_unit:59.90}]
 };
 
-var challenges = [
-  {id:1,level:'Iniciante',color:'#3ecf8e',title:'Liste todos os produtos',
-   desc:'Escreva uma query que retorne todas as colunas e todas as linhas da tabela produtos.',
-   tags:['SELECT','FROM'],
-   gabarito:'SELECT * FROM produtos',
-   check:function(r){return r.length===12&&r[0].hasOwnProperty('id_produto');}},
-  {id:2,level:'Iniciante',color:'#3ecf8e',title:'Produtos acima de R$ 100',
-   desc:'Retorne o nome e o preço dos produtos que custam mais de R$ 100, ordenados do mais caro para o mais barato.',
-   tags:['WHERE','ORDER BY'],
-   gabarito:'SELECT nome, preco FROM produtos\nWHERE preco > 100\nORDER BY preco DESC',
-   check:function(r){return r.length>0&&r.every(function(x){return x.preco>100;})&&r[0].preco>=r[r.length-1].preco;}},
-  {id:3,level:'Iniciante',color:'#3ecf8e',title:'Clientes por cidade',
-   desc:'Mostre cada cidade e o número de clientes nela, ordenado da cidade com mais clientes para a com menos.',
-   tags:['GROUP BY','COUNT','ORDER BY'],
-   gabarito:'SELECT cidade, COUNT(*) AS total\nFROM clientes\nGROUP BY cidade\nORDER BY total DESC',
-   check:function(r){return r.length>0&&r[0].hasOwnProperty('cidade')&&r[0].total>=r[r.length-1].total;}},
-  {id:4,level:'Intermediário',color:'#fbbf24',title:'Produto com sua categoria',
-   desc:'Faça um JOIN entre produtos e categorias para mostrar o nome do produto e o nome da categoria de cada um.',
-   tags:['INNER JOIN'],
-   gabarito:'SELECT p.nome, c.nome_categoria\nFROM produtos p\nINNER JOIN categorias c ON p.id_categoria = c.id_categoria',
-   check:function(r){return r.length===12&&r[0].hasOwnProperty('nome')&&r[0].hasOwnProperty('nome_categoria');}},
-  {id:5,level:'Intermediário',color:'#fbbf24',title:'Clientes sem pedidos (LEFT JOIN)',
-   desc:'Liste todos os clientes e o número de pedidos de cada um. Clientes sem pedidos devem aparecer com 0. Use LEFT JOIN.',
-   tags:['LEFT JOIN','COUNT','GROUP BY'],
-   gabarito:'SELECT cl.nome, COUNT(pe.id_pedido) AS total_pedidos\nFROM clientes cl\nLEFT JOIN pedidos pe ON cl.id_cliente = pe.id_cliente\nGROUP BY cl.id_cliente, cl.nome\nORDER BY total_pedidos DESC',
-   check:function(r){return r.length===7&&r[0].hasOwnProperty('nome');}},
-  {id:6,level:'Intermediário',color:'#fbbf24',title:'Categorias com mais de 2 produtos',
-   desc:'Mostre o nome das categorias que possuem mais de 2 produtos cadastrados, com a contagem de produtos.',
-   tags:['JOIN','GROUP BY','HAVING'],
-   gabarito:'SELECT c.nome_categoria, COUNT(p.id_produto) AS total\nFROM categorias c\nINNER JOIN produtos p ON c.id_categoria = p.id_categoria\nGROUP BY c.id_categoria, c.nome_categoria\nHAVING COUNT(p.id_produto) > 2',
-   check:function(r){return r.length>0&&r.every(function(x){return x.total>2;});}},
-  {id:7,level:'Avançado',color:'#6c8eff',title:'Produtos mais caros que a média',
-   desc:'Liste os produtos cujo preço está acima da média de todos os produtos. Use uma subquery no WHERE.',
-   tags:['Subquery','WHERE','AVG'],
-   gabarito:'SELECT nome, preco FROM produtos\nWHERE preco > (SELECT AVG(preco) FROM produtos)\nORDER BY preco DESC',
-   check:function(r){return r.length>0&&r[0].preco>r[r.length-1].preco;}},
-  {id:8,level:'Avançado',color:'#6c8eff',title:'Relatório de vendas por cliente',
-   desc:'Para cada cliente: nome, cidade, número de pedidos e total gasto. Inclua quem não tem pedidos. Ordene pelo maior gasto.',
-   tags:['LEFT JOIN','GROUP BY','SUM','COUNT'],
-   gabarito:'SELECT cl.nome, cl.cidade,\n  COUNT(pe.id_pedido) AS total_pedidos,\n  SUM(pe.total) AS gasto_total\nFROM clientes cl\nLEFT JOIN pedidos pe ON cl.id_cliente = pe.id_cliente\nGROUP BY cl.id_cliente, cl.nome, cl.cidade\nORDER BY gasto_total DESC',
-   check:function(r){return r.length===7&&r[0].hasOwnProperty('gasto_total');}},
-  {id:9,level:'Avançado',color:'#6c8eff',title:'Top 3 produtos mais vendidos',
-   desc:'Mostre os 3 produtos mais vendidos por quantidade total, com o nome e a soma das quantidades.',
-   tags:['JOIN','GROUP BY','ORDER BY','LIMIT'],
-   gabarito:'SELECT p.nome, SUM(ip.quantidade) AS total_vendido\nFROM produtos p\nINNER JOIN itens_pedido ip ON p.id_produto = ip.id_produto\nGROUP BY p.id_produto, p.nome\nORDER BY total_vendido DESC\nLIMIT 3',
-   check:function(r){return r.length===3&&r[0].hasOwnProperty('total_vendido');}},
-  {id:10,level:'Expert',color:'#a78bfa',title:'Ticket médio por categoria',
-   desc:'Calcule o ticket médio dos pedidos por categoria de produto. Junte 4 tabelas: pedidos, itens_pedido, produtos e categorias.',
-   tags:['4 JOINs','AVG','GROUP BY'],
-   gabarito:'SELECT c.nome_categoria,\n  AVG(pe.total) AS ticket_medio\nFROM pedidos pe\nINNER JOIN itens_pedido ip ON pe.id_pedido = ip.id_pedido\nINNER JOIN produtos p ON ip.id_produto = p.id_produto\nINNER JOIN categorias c ON p.id_categoria = c.id_categoria\nGROUP BY c.id_categoria, c.nome_categoria\nORDER BY ticket_medio DESC',
-   check:function(r){return r.length>0&&r[0].hasOwnProperty('nome_categoria');}}
-];
-
-function initDB() {
-  try {
-    ['categorias','produtos','clientes','pedidos','itens_pedido'].forEach(function(t){
-      try{alasql('DROP TABLE '+t);}catch(e){}
+// ── SQL ENGINE ────────────────────────────────────────────────────────────
+function sqlEngine(sql){
+  var s=sql.trim().replace(/\s+/g,' ');
+  if(!/^SELECT\b/i.test(s)) throw new Error('Apenas queries SELECT são permitidas.');
+  var src=s,limitN=null,offsetN=0;
+  var lm=src.match(/\bLIMIT\s+(\d+)(?:\s+OFFSET\s+(\d+))?\s*$/i);
+  if(lm){limitN=+lm[1];if(lm[2])offsetN=+lm[2];src=src.slice(0,src.length-lm[0].length).trim();}
+  var orderCols=[],orderDirs=[];
+  var om=src.match(/\bORDER\s+BY\s+(.+?)\s*$/i);
+  if(om){om[1].split(',').forEach(function(p){var t=p.trim().split(/\s+/);orderCols.push(t[0].replace(/^\w+\./,''));orderDirs.push((t[1]||'ASC').toUpperCase());});src=src.slice(0,src.length-om[0].length).trim();}
+  var havExpr=null;
+  var hm=src.match(/\bHAVING\s+(.+?)\s*$/i);
+  if(hm){havExpr=hm[1];src=src.slice(0,src.length-hm[0].length).trim();}
+  var grpCols=[];
+  var gm=src.match(/\bGROUP\s+BY\s+(.+?)\s*$/i);
+  if(gm){grpCols=gm[1].split(',').map(function(c){return c.trim().replace(/^\w+\./,'');});src=src.slice(0,src.length-gm[0].length).trim();}
+  var whereExpr=null;
+  var wm=src.match(/\bWHERE\s+(.+?)\s*$/i);
+  if(wm){whereExpr=wm[1];src=src.slice(0,src.length-wm[0].length).trim();}
+  var fm=src.match(/\bFROM\s+(.+?)\s*$/i);
+  if(!fm) throw new Error('FROM não encontrado.');
+  var fromStr=fm[1];
+  var sm=src.match(/^SELECT\s+([\s\S]+?)\s+FROM\b/i);
+  if(!sm) throw new Error('Erro no SELECT.');
+  var selStr=sm[1].trim();
+  var rows=parseFrom(fromStr);
+  if(whereExpr) rows=rows.filter(function(r){return evalCond(whereExpr,r);});
+  var hasAgg=/\b(COUNT|SUM|AVG|MIN|MAX)\s*\(/i.test(selStr);
+  if(grpCols.length>0||hasAgg){
+    rows=doGroupBy(rows,grpCols,selStr);
+    if(havExpr) rows=rows.filter(function(r){return evalCond(havExpr,r);});
+    rows=rows.map(function(r){return projectRow(selStr,r);});
+  } else {
+    rows=rows.map(function(r){return projectRow(selStr,r);});
+  }
+  if(orderCols.length){
+    rows.sort(function(a,b){
+      for(var i=0;i<orderCols.length;i++){
+        var c=orderCols[i],d=orderDirs[i];
+        var va=findV(a,c),vb=findV(b,c);
+        if(va==null) va=d==='ASC'?Infinity:-Infinity;
+        if(vb==null) vb=d==='ASC'?Infinity:-Infinity;
+        var cmp=va<vb?-1:va>vb?1:0;
+        if(cmp) return d==='DESC'?-cmp:cmp;
+      }return 0;
     });
-    alasql('CREATE TABLE categorias'); alasql.tables.categorias.data = DATA.categorias.slice();
-    alasql('CREATE TABLE produtos');   alasql.tables.produtos.data   = DATA.produtos.slice();
-    alasql('CREATE TABLE clientes');   alasql.tables.clientes.data   = DATA.clientes.slice();
-    alasql('CREATE TABLE pedidos');    alasql.tables.pedidos.data    = DATA.pedidos.slice();
-    alasql('CREATE TABLE itens_pedido'); alasql.tables.itens_pedido.data = DATA.itens_pedido.slice();
-    dbReady = true;
-    runQ();
-    showDataTable('produtos', document.querySelector('.data-tab'));
-    renderChList();
-  } catch(e) {
-    document.getElementById('result-content').innerHTML = '<div class="err-msg">Erro ao inicializar banco: '+e.message+'</div>';
   }
+  if(limitN!==null) rows=rows.slice(offsetN,offsetN+limitN);
+  return rows;
 }
-
-function switchPanel(name) {
-  document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
-  document.getElementById('panel-'+name).classList.add('active');
-  document.querySelectorAll('.htab').forEach(function(t, i){
-    t.classList.toggle('active', ['editor','data','schema','challenges'][i] === name);
+function findV(obj,col){
+  if(obj==null) return undefined;
+  if(obj.hasOwnProperty(col)) return obj[col];
+  var lo=col.toLowerCase();
+  for(var k in obj) if(k.toLowerCase()===lo||k.toLowerCase().split('.').pop()===lo) return obj[k];
+  return undefined;
+}
+function parseFrom(fs){
+  var bm=fs.match(/^(\w+)(?:\s+(?:AS\s+)?(\w+))?/i);
+  if(!bm) throw new Error('Tabela não encontrada.');
+  var bn=bm[1],ba=bm[2]||bm[1];
+  if(!DB[bn]) throw new Error('Tabela desconhecida: '+bn);
+  var rows=DB[bn].map(function(r){var o={};for(var k in r)o[ba+'.'+k]=r[k];return o;});
+  var jp=fs.slice(bm[0].length).trim();
+  var jrx=/(INNER\s+JOIN|LEFT\s+(?:OUTER\s+)?JOIN|RIGHT\s+JOIN|JOIN)\s+(\w+)(?:\s+(?:AS\s+)?(\w+))?\s+ON\s+(.+?)(?=\s+(?:INNER|LEFT|RIGHT|JOIN)\b|$)/gi,jm;
+  while((jm=jrx.exec(jp))!==null){
+    var jt=jm[2],ja=jm[3]||jm[2],jon=jm[4].trim(),isL=/LEFT/i.test(jm[1]);
+    if(!DB[jt]) throw new Error('Tabela desconhecida: '+jt);
+    rows=doJoin(rows,DB[jt],ja,jon,isL);
+  }
+  return rows;
+}
+function doJoin(left,rt,ra,on,isLeft){
+  var res=[];
+  left.forEach(function(lr){
+    var matched=false;
+    rt.forEach(function(rr){
+      var rrow={};for(var k in rr)rrow[ra+'.'+k]=rr[k];
+      var c=Object.assign({},lr,rrow);
+      if(evalCond(on,c)){matched=true;res.push(c);}
+    });
+    if(isLeft&&!matched){var nr={};if(rt[0])for(var k in rt[0])nr[ra+'.'+k]=null;res.push(Object.assign({},lr,nr));}
   });
+  return res;
 }
-
-function fmtVal(v, col) {
-  if (v === null || v === undefined) return '<span class="null-v">NULL</span>';
-  if (typeof v === 'number') {
-    var cls = col && (col.toLowerCase().includes('id') && Number.isInteger(v)) ? 'td-id' : 'td-num';
-    return '<span class="'+cls+'">'+(Number.isInteger(v)?v:v.toFixed(2))+'</span>';
+function splitOuter(expr,sep){
+  var parts=[],depth=0,cur='',i=0,sl=sep.toLowerCase(),el=expr.toLowerCase();
+  while(i<expr.length){
+    var c=expr[i];
+    if(c==='(')depth++;else if(c===')')depth--;
+    else if(!depth&&el.slice(i,i+sl.length)===sl){parts.push(cur);cur='';i+=sl.length;continue;}
+    cur+=c;i++;
   }
-  return '<span class="td-str">'+String(v)+'</span>';
+  parts.push(cur);
+  return parts.length>1?parts:[expr];
 }
-
-function buildTable(rows, cls) {
-  if (!rows || rows.length === 0) return '<div style="padding:1rem;color:var(--text3);font-size:0.8rem">Nenhum resultado.</div>';
-  var cols = Object.keys(rows[0]);
-  var h = '<table class="'+(cls||'result-table')+'"><thead><tr>';
-  cols.forEach(function(c){ h += '<th>'+c+'</th>'; });
-  h += '</tr></thead><tbody>';
+function resolveVal(s,row){
+  s=s.trim();
+  if(/^'.*'$/.test(s)) return s.slice(1,-1);
+  if(/^".*"$/.test(s)) return s.slice(1,-1);
+  if(/^-?\d+(\.\d+)?$/.test(s)) return parseFloat(s);
+  if(/^NULL$/i.test(s)) return null;
+  if(/^\(SELECT\b/i.test(s)){try{var r=sqlEngine(s.slice(1,-1));return r.length?Object.values(r[0])[0]:null;}catch(e){return null;}}
+  if(/[\+\-\*\/]/.test(s)&&!/^\w+\s*\(/.test(s)){
+    try{var ex2=s.replace(/(\w+\.\w+|\b[a-zA-Z_]\w*\b)/g,function(m){var v=findV(row,m.replace(/^\w+\./,''));return v!==undefined?JSON.stringify(v):m;});return Function('"use strict";return('+ex2+')')();}catch(e){}
+  }
+  var col=s.indexOf('.')>-1?s.split('.').pop():s;
+  return findV(row,col);
+}
+function evalCond(expr,row){
+  expr=expr.replace(/\(\s*SELECT[\s\S]+?\)/gi,function(sub){try{var r=sqlEngine(sub.slice(1,-1));if(r.length){var v=Object.values(r[0])[0];return typeof v==='string'?"'"+v+"'":String(v);}return 'NULL';}catch(e){return 'NULL';}});
+  var or=splitOuter(expr,' OR ');
+  if(or.length>1) return or.some(function(p){return evalCond(p.trim(),row);});
+  var and=splitOuter(expr,' AND ');
+  if(and.length>1) return and.every(function(p){return evalCond(p.trim(),row);});
+  if(/^NOT\s+/i.test(expr)) return !evalCond(expr.replace(/^NOT\s+/i,''),row);
+  if(/^\(/.test(expr)&&/\)$/.test(expr)){var inn=expr.slice(1,-1);var d=0,ok=true;for(var i=0;i<inn.length;i++){if(inn[i]==='(')d++;if(inn[i]===')')d--;if(d<0){ok=false;break;}}if(ok&&d===0)return evalCond(inn.trim(),row);}
+  var inm=expr.match(/^(.+?)\s+(NOT\s+)?IN\s*\((.+)\)\s*$/i);
+  if(inm){var lv=resolveVal(inm[1],row);var items=splitOuter(inm[3],',').map(function(x){return resolveVal(x.trim(),row);});var found=items.some(function(i){return leq(lv,i);});return inm[2]?!found:found;}
+  var lkm=expr.match(/^(.+?)\s+(NOT\s+)?LIKE\s+(.+)\s*$/i);
+  if(lkm){var lv=resolveVal(lkm[1],row),pat=resolveVal(lkm[3],row);var rx=new RegExp('^'+String(pat).replace(/%/g,'.*').replace(/_/g,'.')+'$','i');var res=rx.test(String(lv||''));return lkm[2]?!res:res;}
+  var btm=expr.match(/^(.+?)\s+BETWEEN\s+(.+?)\s+AND\s+(.+)\s*$/i);
+  if(btm){var v=resolveVal(btm[1],row),lo=resolveVal(btm[2],row),hi=resolveVal(btm[3],row);return v>=lo&&v<=hi;}
+  var inullm=expr.match(/^(.+?)\s+IS\s+(NOT\s+)?NULL\s*$/i);
+  if(inullm){var v=resolveVal(inullm[1],row);return inullm[2]?v!=null:v==null;}
+  var cm=expr.match(/^(.+?)\s*(!=|<>|<=|>=|=|<|>)\s*(.+)$/);
+  if(cm){var lv=resolveVal(cm[1],row),op=cm[2],rv=resolveVal(cm[3],row);
+    if(op==='='||op==='==') return leq(lv,rv);
+    if(op==='!='||op==='<>') return !leq(lv,rv);
+    if(op==='<') return lv<rv;if(op==='>') return lv>rv;
+    if(op==='<=') return lv<=rv;if(op==='>=') return lv>=rv;
+  }
+  return false;
+}
+function leq(a,b){if(a==null||b==null)return a===b;return String(a).toLowerCase()===String(b).toLowerCase()||Number(a)===Number(b);}
+function splitSel(s){var p=[],d=0,c='';for(var i=0;i<s.length;i++){var ch=s[i];if(ch==='(')d++;else if(ch===')')d--;else if(ch===','&&!d){p.push(c.trim());c='';continue;}c+=ch;}p.push(c.trim());return p;}
+function projectRow(selStr,row){
+  if(selStr.trim()==='*'){var o={};for(var k in row){var c=k.split('.').pop();o[c]=row[k];}return o;}
+  var cols=splitSel(selStr),out={};
+  cols.forEach(function(col){
+    col=col.trim();
+    var am=col.match(/^([\s\S]+?)\s+AS\s+(\w+)\s*$/i);
+    var alias=am?am[2]:null,expr=am?am[1].trim():col;
+    if(expr==='*'){for(var k in row){var c=k.split('.').pop();out[c]=row[k];}return;}
+    var val,aggm=expr.match(/^(COUNT|SUM|AVG|MIN|MAX)\s*\(\s*(DISTINCT\s+)?(.+?)\s*\)\s*$/i);
+    if(aggm){var fn=aggm[1].toUpperCase(),inner=aggm[3].trim(),key=fn+'('+inner+')';val=row.hasOwnProperty(key)?row[key]:(row[fn+'(DISTINCT '+inner+')']||0);}
+    else {var casem=expr.match(/^CASE\b([\s\S]+?)\bEND\s*$/i);val=casem?evalCase(casem[1],row):resolveVal(expr,row);}
+    out[alias||(expr.replace(/^\w+\./,'').replace(/[()]/g,'').replace(/\s+/g,'_').slice(0,30))]=val;
+  });
+  return out;
+}
+function evalCase(body,row){
+  var em=body.match(/\bELSE\s+(.+?)\s*$/i),ev=em?resolveVal(em[1],row):null;
+  var parts=em?body.slice(0,body.lastIndexOf(em[0])):body;
+  var rx=/WHEN\s+(.*?)\s+THEN\s+(.*?)(?=\s+WHEN\b|\s*$)/gi,m;
+  while((m=rx.exec(parts))!==null){if(evalCond(m[1].trim(),row))return resolveVal(m[2].trim(),row);}
+  return ev;
+}
+function extractAgg(selStr){
+  var res=[],rx=/\b(COUNT|SUM|AVG|MIN|MAX)\s*\(\s*(DISTINCT\s+)?(.+?)\s*\)/gi,m;
+  while((m=rx.exec(selStr))!==null)res.push({fn:m[1].toUpperCase(),dist:!!m[2],inner:m[3].trim()});
+  return res;
+}
+function doGroupBy(rows,grpCols,selStr){
+  var groups={},order=[];
+  var aggs=extractAgg(selStr);
   rows.forEach(function(row){
-    h += '<tr>';
-    cols.forEach(function(c){ h += '<td>'+fmtVal(row[c], c)+'</td>'; });
-    h += '</tr>';
+    var key=grpCols.length?grpCols.map(function(c){return String(findV(row,c));}).join('|'):'__all__';
+    if(!groups[key]){groups[key]={__r:[],__k:key};order.push(key);grpCols.forEach(function(c){groups[key][c]=findV(row,c);});}
+    groups[key].__r.push(row);
   });
-  h += '</tbody></table>';
-  return h;
-}
-
-function execSQL(sql) {
-  var forbidden = /^\s*(DROP|DELETE|INSERT|UPDATE|CREATE|ALTER|TRUNCATE)/i;
-  if (forbidden.test(sql) && !/SELECT/i.test(sql)) throw new Error('Apenas queries SELECT são permitidas.');
-  return alasql(sql);
-}
-
-function setQ(q) { document.getElementById('sql-editor').value = q; runQ(); switchPanel('editor'); }
-function insertTable(q) { document.getElementById('sql-editor').value = q; runQ(); switchPanel('editor'); }
-
-function runQ() {
-  if (!dbReady) return;
-  var sql = document.getElementById('sql-editor').value.trim();
-  if (!sql) return;
-  var badge = document.getElementById('result-badge');
-  var content = document.getElementById('result-content');
-  try {
-    var rows = execSQL(sql);
-    if (!rows || rows.length === 0) {
-      badge.innerHTML = '<span class="row-badge ok">0 linhas</span>';
-      content.innerHTML = '<div style="padding:1rem;color:var(--text3);font-size:0.8rem">Nenhum resultado.</div>';
-      return;
-    }
-    badge.innerHTML = '<span class="row-badge ok">'+rows.length+' linha'+(rows.length>1?'s':'')+'</span>';
-    content.innerHTML = '<div class="fade-in">'+buildTable(rows,'result-table')+'</div>';
-  } catch(e) {
-    badge.innerHTML = '<span class="row-badge err">Erro</span>';
-    content.innerHTML = '<div class="err-msg">'+e.message+'</div>';
-  }
-}
-
-function showDataTable(name, btn) {
-  document.querySelectorAll('.data-tab').forEach(function(b){ b.classList.remove('active'); });
-  if(btn) btn.classList.add('active');
-  document.getElementById('data-display').innerHTML = '<div class="fade-in">'+buildTable(DATA[name],'data-table')+'</div>';
-}
-
-function renderChList() {
-  var list = document.getElementById('ch-list-items');
-  list.innerHTML = '';
-  challenges.forEach(function(ch){
-    var div = document.createElement('div');
-    div.className = 'ch-item' + (solved[ch.id]?' done':'');
-    div.id = 'ch-list-item-'+ch.id;
-    div.innerHTML = '<span class="ch-status-icon">'+(solved[ch.id]?'✅':'⬜')+'</span>'
-      +'<div class="ch-info">'
-        +'<div class="ch-item-title">'+ch.id+'. '+ch.title+'</div>'
-        +'<div class="ch-item-lvl" style="color:'+ch.color+'">'+ch.level+'</div>'
-      +'</div>';
-    div.onclick = function(){ loadChallenge(ch.id); };
-    list.appendChild(div);
+  return order.map(function(key){
+    var g=groups[key],gr=g.__r,out={};
+    Object.assign(out,g);delete out.__r;delete out.__k;
+    if(gr[0])Object.keys(gr[0]).forEach(function(k){out[k]=gr[0][k];});
+    aggs.forEach(function(ae){
+      var vals=gr.map(function(r){return findV(r,ae.inner);});
+      if(ae.dist)vals=vals.filter(function(v,i,a){return a.indexOf(v)===i;});
+      var res;
+      switch(ae.fn){
+        case 'COUNT':res=ae.inner==='*'?gr.length:vals.filter(function(v){return v!=null;}).length;break;
+        case 'SUM':res=vals.reduce(function(a,b){return a+(+b||0);},0);break;
+        case 'AVG':var nv=vals.filter(function(v){return v!=null;});res=nv.length?nv.reduce(function(a,b){return a+(+b||0);},0)/nv.length:null;break;
+        case 'MIN':res=Math.min.apply(null,vals.filter(function(v){return v!=null;}));break;
+        case 'MAX':res=Math.max.apply(null,vals.filter(function(v){return v!=null;}));break;
+      }
+      out[ae.fn+'('+ae.inner+')']=res;
+    });
+    return out;
   });
-  updateProgress();
 }
 
-function loadChallenge(id) {
-  currentChallenge = id;
-  var ch = challenges.find(function(c){ return c.id===id; });
-  document.querySelectorAll('.ch-item').forEach(function(el){ el.classList.remove('selected'); });
-  var item = document.getElementById('ch-list-item-'+id);
-  if(item) item.classList.add('selected');
-
-  var main = document.getElementById('ch-main');
-  main.innerHTML = '<div class="ch-desc-area">'
-    +'<h3>'+ch.id+'. '+ch.title+'</h3>'
-    +'<p>'+ch.desc+'</p>'
-    +'<div class="ch-tags">'+ch.tags.map(function(t){return '<span class="ch-tag">'+t+'</span>';}).join('')+'</div>'
-    +'</div>'
-    +'<div class="ch-editor-area">'
-      +'<div class="ch-editor-bar">'
-        +'<button class="btn primary" onclick="checkCh('+id+')">✓ Verificar</button>'
-        +'<button class="btn" onclick="runCh('+id+')">▶ Executar</button>'
-        +'<button class="btn" onclick="toggleGab('+id+')" id="gab-btn-'+id+'">Gabarito</button>'
-      +'</div>'
-      +'<textarea class="ch-editor" id="ch-ed-'+id+'" placeholder="-- Escreva sua query aqui..."></textarea>'
-      +'<div class="ch-result-area" id="ch-res-'+id+'"></div>'
-    +'</div>';
+// ── UI ────────────────────────────────────────────────────────────────────
+var solved={};
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function fmtV(v,col){
+  if(v==null) return '<span class="null-v">NULL</span>';
+  if(typeof v==='number')return '<span class="'+(col&&/^id_/i.test(col)?'nid':'nnum')+'">'+(Number.isInteger(v)?v:v.toFixed(2))+'</span>';
+  return '<span class="nstr">'+esc(String(v))+'</span>';
 }
-
-function runCh(id) {
-  var sql = document.getElementById('ch-ed-'+id).value.trim();
-  var res = document.getElementById('ch-res-'+id);
-  if(!sql){res.innerHTML='<div class="ch-feedback info">⚠ Escreva uma query primeiro.</div>';return;}
-  try {
-    var rows = execSQL(sql);
-    if(!rows||rows.length===0){res.innerHTML='<div class="ch-feedback info">0 linhas retornadas.</div>';return;}
-    var show = rows.slice(0,10);
-    res.innerHTML = '<div class="ch-feedback ok" style="padding:6px 1rem;font-size:0.72rem">'+rows.length+' linha'+(rows.length>1?'s':'')+'</div>'
-      +'<div style="overflow-x:auto">'+buildTable(show,'result-table')+'</div>'
-      +(rows.length>10?'<div style="padding:4px 1rem;font-size:0.68rem;color:var(--text3)">...e mais '+(rows.length-10)+' linhas</div>':'');
-  } catch(e) {
-    res.innerHTML = '<div class="err-msg" style="margin:8px">'+e.message+'</div>';
-  }
+function buildTbl(rows,cls){
+  if(!rows||!rows.length) return '<div style="padding:1rem;color:var(--text3);font-size:0.8rem">Nenhum resultado.</div>';
+  var cols=Object.keys(rows[0]),h='<table class="'+(cls||'rtbl')+'"><thead><tr>';
+  cols.forEach(function(c){h+='<th>'+esc(c)+'</th>';});
+  h+='</tr></thead><tbody>';
+  rows.forEach(function(row){h+='<tr>';cols.forEach(function(c){h+='<td>'+fmtV(row[c],c)+'</td>';});h+='</tr>';});
+  return h+'</tbody></table>';
 }
-
-function checkCh(id) {
-  var ch = challenges.find(function(c){return c.id===id;});
-  var sql = document.getElementById('ch-ed-'+id).value.trim();
-  var res = document.getElementById('ch-res-'+id);
-  if(!sql){res.innerHTML='<div class="ch-feedback info">⚠ Escreva uma query primeiro.</div>';return;}
-  try {
-    var rows = execSQL(sql);
+function sw(name){
+  document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('active');});
+  document.getElementById('panel-'+name).classList.add('active');
+  ['editor','data','schema','challenges'].forEach(function(n,i){document.querySelectorAll('.htab')[i].classList.toggle('active',n===name);});
+}
+function setQ(q){document.getElementById('sqled').value=q;runQ();sw('editor');}
+function runQ(){
+  var sql=document.getElementById('sqled').value.trim();
+  if(!sql)return;
+  var badge=document.getElementById('rbadge'),content=document.getElementById('rcontent');
+  try{
+    var rows=sqlEngine(sql);
+    if(!rows||!rows.length){badge.innerHTML='<span class="rbadge ok">0 linhas</span>';content.innerHTML='<div style="padding:1rem;color:var(--text3);font-size:0.8rem">Nenhum resultado.</div>';return;}
+    badge.innerHTML='<span class="rbadge ok">'+rows.length+' linha'+(rows.length>1?'s':'')+'</span>';
+    content.innerHTML='<div class="fi">'+buildTbl(rows,'rtbl')+'</div>';
+  }catch(e){badge.innerHTML='<span class="rbadge err">Erro</span>';content.innerHTML='<div class="errmsg">'+esc(e.message)+'</div>';}
+}
+function showDT(name,btn){
+  document.querySelectorAll('.dtab').forEach(function(b){b.classList.remove('active');});
+  if(btn)btn.classList.add('active');
+  document.getElementById('dtdisp').innerHTML='<div class="fi">'+buildTbl(DB[name],'dttbl')+'</div>';
+}
+var CH=[
+  {id:1,lv:'Iniciante',cl:'#4ade80',title:'Liste todos os produtos',desc:'Escreva uma query que retorne todas as colunas e todas as linhas da tabela produtos.',tags:['SELECT','FROM'],gab:'SELECT * FROM produtos',check:function(r){return r.length===12&&r[0].id_produto;}},
+  {id:2,lv:'Iniciante',cl:'#4ade80',title:'Produtos acima de R$ 100',desc:'Retorne o nome e o preço dos produtos que custam mais de R$ 100, ordenados do mais caro para o mais barato.',tags:['WHERE','ORDER BY'],gab:'SELECT nome, preco FROM produtos\nWHERE preco > 100\nORDER BY preco DESC',check:function(r){return r.length>0&&r.every(function(x){return x.preco>100;})&&r[0].preco>=r[r.length-1].preco;}},
+  {id:3,lv:'Iniciante',cl:'#4ade80',title:'Clientes por cidade',desc:'Mostre cada cidade e o número de clientes nela, ordenado da cidade com mais clientes para a com menos.',tags:['GROUP BY','COUNT','ORDER BY'],gab:'SELECT cidade, COUNT(*) AS total\nFROM clientes\nGROUP BY cidade\nORDER BY total DESC',check:function(r){return r.length>0&&r[0].cidade;}},
+  {id:4,lv:'Intermediário',cl:'#fbbf24',title:'Produto com sua categoria',desc:'Faça um JOIN entre produtos e categorias para mostrar o nome do produto e o nome da categoria de cada um.',tags:['INNER JOIN'],gab:'SELECT p.nome, c.nome_categoria\nFROM produtos p\nINNER JOIN categorias c ON p.id_categoria = c.id_categoria',check:function(r){return r.length===12&&r[0].nome&&r[0].nome_categoria;}},
+  {id:5,lv:'Intermediário',cl:'#fbbf24',title:'Clientes sem pedidos (LEFT JOIN)',desc:'Liste todos os clientes e o número de pedidos de cada um. Clientes sem pedidos devem aparecer com 0.',tags:['LEFT JOIN','COUNT','GROUP BY'],gab:'SELECT cl.nome, COUNT(pe.id_pedido) AS total_pedidos\nFROM clientes cl\nLEFT JOIN pedidos pe ON cl.id_cliente = pe.id_cliente\nGROUP BY cl.id_cliente, cl.nome\nORDER BY total_pedidos DESC',check:function(r){return r.length===7&&r[0].nome;}},
+  {id:6,lv:'Intermediário',cl:'#fbbf24',title:'Categorias com mais de 2 produtos',desc:'Mostre o nome das categorias que possuem mais de 2 produtos cadastrados, com a contagem.',tags:['JOIN','GROUP BY','HAVING'],gab:'SELECT c.nome_categoria, COUNT(p.id_produto) AS total\nFROM categorias c\nINNER JOIN produtos p ON c.id_categoria = p.id_categoria\nGROUP BY c.id_categoria, c.nome_categoria\nHAVING COUNT(p.id_produto) > 2',check:function(r){return r.length>0&&r.every(function(x){return x.total>2;});}},
+  {id:7,lv:'Avançado',cl:'#a78bfa',title:'Produtos mais caros que a média',desc:'Liste os produtos cujo preço está acima da média de todos os produtos. Use uma subquery no WHERE.',tags:['Subquery','WHERE','AVG'],gab:'SELECT nome, preco FROM produtos\nWHERE preco > (SELECT AVG(preco) FROM produtos)\nORDER BY preco DESC',check:function(r){return r.length>0&&r[0].preco>r[r.length-1].preco;}},
+  {id:8,lv:'Avançado',cl:'#a78bfa',title:'Relatório de vendas por cliente',desc:'Para cada cliente: nome, cidade, número de pedidos e total gasto. Inclua quem não tem pedidos. Ordene pelo maior gasto.',tags:['LEFT JOIN','GROUP BY','SUM','COUNT'],gab:'SELECT cl.nome, cl.cidade,\n  COUNT(pe.id_pedido) AS total_pedidos,\n  SUM(pe.total) AS gasto_total\nFROM clientes cl\nLEFT JOIN pedidos pe ON cl.id_cliente = pe.id_cliente\nGROUP BY cl.id_cliente, cl.nome, cl.cidade\nORDER BY gasto_total DESC',check:function(r){return r.length===7&&r[0].gasto_total!==undefined;}},
+  {id:9,lv:'Avançado',cl:'#a78bfa',title:'Top 3 produtos mais vendidos',desc:'Mostre os 3 produtos mais vendidos por quantidade total, com o nome e a soma das quantidades.',tags:['JOIN','GROUP BY','ORDER BY','LIMIT'],gab:'SELECT p.nome, SUM(ip.quantidade) AS total_vendido\nFROM produtos p\nINNER JOIN itens_pedido ip ON p.id_produto = ip.id_produto\nGROUP BY p.id_produto, p.nome\nORDER BY total_vendido DESC\nLIMIT 3',check:function(r){return r.length===3&&r[0].total_vendido!==undefined;}},
+  {id:10,lv:'Expert',cl:'#f87272',title:'Ticket médio por categoria',desc:'Calcule o ticket médio dos pedidos por categoria de produto, juntando 4 tabelas: pedidos, itens_pedido, produtos e categorias.',tags:['4 JOINs','AVG','GROUP BY'],gab:'SELECT c.nome_categoria,\n  AVG(pe.total) AS ticket_medio\nFROM pedidos pe\nINNER JOIN itens_pedido ip ON pe.id_pedido = ip.id_pedido\nINNER JOIN produtos p ON ip.id_produto = p.id_produto\nINNER JOIN categorias c ON p.id_categoria = c.id_categoria\nGROUP BY c.id_categoria, c.nome_categoria\nORDER BY ticket_medio DESC',check:function(r){return r.length>0&&r[0].nome_categoria;}}
+];
+function renderChList(){
+  var list=document.getElementById('chlist');list.innerHTML='';
+  CH.forEach(function(ch){
+    var d=document.createElement('div');d.className='chitem'+(solved[ch.id]?' done':'');d.id='chi-'+ch.id;
+    d.innerHTML='<span style="font-size:1rem;flex-shrink:0">'+(solved[ch.id]?'✅':'⬜')+'</span><div style="flex:1;min-width:0"><div class="chit">'+ch.id+'. '+esc(ch.title)+'</div><div class="chilv" style="color:'+ch.cl+'">'+ch.lv+'</div></div>';
+    d.onclick=function(){loadCh(ch.id);};list.appendChild(d);
+  });updateProg();
+}
+function loadCh(id){
+  var ch=CH.find(function(c){return c.id===id;});
+  document.querySelectorAll('.chitem').forEach(function(el){el.classList.remove('sel');});
+  var item=document.getElementById('chi-'+id);if(item)item.classList.add('sel');
+  document.getElementById('chmain').innerHTML=
+    '<div class="chda"><h3>'+ch.id+'. '+esc(ch.title)+'</h3><p>'+esc(ch.desc)+'</p><div class="chtags">'+ch.tags.map(function(t){return '<span class="chtag">'+t+'</span>';}).join('')+'</div></div>'
+    +'<div class="chea"><div class="chebar"><button class="btn primary" onclick="chkCh('+id+')">✓ Verificar</button><button class="btn" onclick="runCh('+id+')">▶ Executar</button><button class="btn" onclick="togGab('+id+')">Gabarito</button></div><textarea class="ched" id="ched-'+id+'" placeholder="-- Escreva sua query aqui..."></textarea><div class="chra" id="chres-'+id+'"></div></div>';
+}
+function runCh(id){
+  var sql=document.getElementById('ched-'+id).value.trim();
+  var res=document.getElementById('chres-'+id);
+  if(!sql){res.innerHTML='<div class="chfb info">⚠ Escreva uma query primeiro.</div>';return;}
+  try{
+    var rows=sqlEngine(sql);
+    if(!rows||!rows.length){res.innerHTML='<div class="chfb info">0 linhas retornadas.</div>';return;}
+    var show=rows.slice(0,10);
+    res.innerHTML='<div class="chfb ok" style="padding:6px 1rem;font-size:0.72rem">'+rows.length+' linha'+(rows.length>1?'s':'')+'</div><div style="overflow-x:auto">'+buildTbl(show,'rtbl')+'</div>'+(rows.length>10?'<div style="padding:4px 1rem;font-size:0.68rem;color:var(--text3)">...e mais '+(rows.length-10)+' linhas</div>':'');
+  }catch(e){res.innerHTML='<div class="errmsg" style="margin:8px">'+esc(e.message)+'</div>';}
+}
+function chkCh(id){
+  var ch=CH.find(function(c){return c.id===id;});
+  var sql=document.getElementById('ched-'+id).value.trim();
+  var res=document.getElementById('chres-'+id);
+  if(!sql){res.innerHTML='<div class="chfb info">⚠ Escreva uma query primeiro.</div>';return;}
+  try{
+    var rows=sqlEngine(sql);
     if(ch.check(rows)){
       solved[id]=true;
-      var item=document.getElementById('ch-list-item-'+id);
-      if(item){item.querySelector('.ch-status-icon').textContent='✅';item.classList.add('done');}
-      res.innerHTML='<div class="ch-feedback ok">✅ Correto! Query retornou o resultado esperado.</div>';
-      updateProgress();
-      setTimeout(function(){runCh(id);},300);
-    } else {
-      res.innerHTML='<div class="ch-feedback err">✗ Resultado incorreto. Verifique a lógica e tente novamente.</div>';
-      runCh(id);
+      var item=document.getElementById('chi-'+id);
+      if(item)item.querySelector('span').textContent='✅';
+      res.innerHTML='<div class="chfb ok">✅ Correto! Query retornou o resultado esperado.</div>';
+      updateProg();setTimeout(function(){runCh(id);},200);
+    }else{
+      res.innerHTML='<div class="chfb err">✗ Resultado incorreto. Verifique a lógica e tente novamente.</div>';runCh(id);
     }
-  } catch(e) {
-    res.innerHTML='<div class="err-msg" style="margin:8px">'+e.message+'</div>';
-  }
+  }catch(e){res.innerHTML='<div class="errmsg" style="margin:8px">'+esc(e.message)+'</div>';}
 }
-
-function toggleGab(id) {
-  var ch = challenges.find(function(c){return c.id===id;});
-  var res = document.getElementById('ch-res-'+id);
-  var existing = document.getElementById('gab-box-'+id);
-  if(existing){existing.remove();return;}
-  var div = document.createElement('div');
-  div.id='gab-box-'+id;
-  div.className='gab-box';
-  div.innerHTML='<div class="gab-lbl">Gabarito</div><div class="gab-code">'+ch.gabarito+'</div>';
-  res.appendChild(div);
+function togGab(id){
+  var ch=CH.find(function(c){return c.id===id;});
+  var res=document.getElementById('chres-'+id);
+  var ex=document.getElementById('gab-'+id);
+  if(ex){ex.remove();return;}
+  var d=document.createElement('div');d.id='gab-'+id;d.className='gabbox';
+  d.innerHTML='<div class="gablbl">Gabarito</div><div class="gabcode">'+esc(ch.gab)+'</div>';
+  res.appendChild(d);
 }
-
-function updateProgress() {
-  var n = Object.keys(solved).length;
-  var total = challenges.length;
-  var pct = Math.round(n/total*100);
-  document.getElementById('hdr-prog-txt').textContent = n+'/'+total;
-  document.getElementById('hdr-prog-fill').style.width = pct+'%';
-  document.getElementById('ch-hdr-txt').textContent = n+' de '+total+' concluídos';
-  document.getElementById('ch-prog-fill').style.width = pct+'%';
+function updateProg(){
+  var n=Object.keys(solved).length,t=CH.length,p=Math.round(n/t*100);
+  document.getElementById('hprog').textContent=n+'/'+t;
+  document.getElementById('hfill').style.width=p+'%';
+  document.getElementById('chtxt').textContent=n+' de '+t+' concluídos';
+  document.getElementById('chpf').style.width=p+'%';
 }
-
-document.addEventListener('keydown', function(e){
-  if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){
-    e.preventDefault();
-    var active = document.querySelector('.panel.active');
-    if(active && active.id==='panel-editor') runQ();
-  }
+document.addEventListener('keydown',function(e){
+  if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){e.preventDefault();if(document.getElementById('panel-editor').classList.contains('active'))runQ();}
 });
-
-window.addEventListener('load', function(){ setTimeout(initDB, 200); });
+window.addEventListener('load',function(){
+  runQ();
+  showDT('produtos',document.querySelector('.dtab'));
+  renderChList();
+});
 </script>
 
 
