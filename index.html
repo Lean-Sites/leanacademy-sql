@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0055)file:///C:/Users/natha/Downloads/leanacademy-sql_2.html -->
+<!-- saved from url=(0055)file:///C:/Users/natha/Downloads/leanacademy-sql_3.html -->
 <html lang="pt-BR"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,7 +16,7 @@
   --red:#f87272;--red-bg:rgba(248,114,114,0.1);
   --amber:#fbbf24;--amber-bg:rgba(251,191,36,0.1);
   --mono:'JetBrains Mono',monospace;--display:'Syne',sans-serif;
-  --radius:10px;--radius-lg:14px;
+  --radius:10px;--radius-lg:14px;a
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{font-size:15px}
@@ -124,9 +124,9 @@ textarea#sqled::placeholder{color:var(--text3)}
 .chda p{font-size:0.82rem;color:var(--text2);line-height:1.65;margin-bottom:10px}
 .chtags{display:flex;gap:6px;flex-wrap:wrap}
 .chtag{font-size:0.65rem;font-weight:700;padding:3px 9px;border-radius:20px;font-family:var(--mono);background:var(--bg4);border:1px solid var(--border2);color:var(--text2)}
-.chea{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.chea{flex:1;display:flex;flex-direction:column;overflow-y:auto}
 .chebar{padding:8px 1rem;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
-textarea.ched{flex:1;background:var(--bg);color:var(--text);font-family:var(--mono);font-size:0.82rem;line-height:1.7;padding:1rem 1.2rem;border:none;outline:none;resize:none;min-height:100px}
+textarea.ched{background:var(--bg);color:var(--text);font-family:var(--mono);font-size:0.82rem;line-height:1.7;padding:1rem 1.2rem;border:none;outline:none;resize:none;min-height:130px;max-height:260px;flex-shrink:0;width:100%}
 .chra{border-top:1px solid var(--border);overflow:auto;max-height:200px;flex-shrink:0}
 .chfb{padding:10px 1rem;font-size:0.8rem;font-weight:600;display:flex;align-items:center;gap:8px}
 .chfb.ok{background:var(--green-bg);color:var(--green);border-top:1px solid rgba(74,222,128,0.2)}
@@ -136,7 +136,7 @@ textarea.ched{flex:1;background:var(--bg);color:var(--text);font-family:var(--mo
 .btn:hover{color:var(--text);background:var(--bg4)}
 .btn.primary{background:linear-gradient(135deg,#22c55e,#4ade80);border-color:transparent;color:#0a1a10}
 .btn.primary:hover{opacity:0.85}
-.gabbox{margin:0.8rem 1rem;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px}
+.gabbox{margin:0.8rem 1rem 1rem;background:var(--bg3);border:1px solid rgba(167,139,250,0.35);border-radius:var(--radius);padding:12px 14px;flex-shrink:0}
 .gablbl{font-size:0.6rem;font-weight:700;color:var(--text3);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:5px}
 .gabcode{font-family:var(--mono);font-size:0.75rem;color:var(--text2);white-space:pre;line-height:1.6;overflow-x:auto}
 .noch{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--text3);gap:8px;font-size:0.82rem;text-align:center;padding:2rem}
@@ -528,14 +528,15 @@ function loadCh(id){
       +'<p>'+esc(ch.desc)+'</p>'
       +'<div class="chtags">'+ch.tags.map(function(t){return '<span class="chtag">'+t+'</span>';}).join('')+'</div>'
     +'</div>'
-    +'<div class="chea">'
+    +'<div class="chea" id="chea-'+id+'">'
       +'<div class="chebar">'
         +'<button class="btn primary" onclick="chkCh('+id+')">✓ Verificar</button>'
         +'<button class="btn" onclick="runCh('+id+')">▶ Executar</button>'
-        +'<button class="btn" onclick="togGab('+id+')">Gabarito</button>'
+        +'<button class="btn" id="gabtn-'+id+'" onclick="togGab('+id+')">Mostrar gabarito</button>'
       +'</div>'
       +'<textarea class="ched" id="ched-'+id+'" placeholder="-- Escreva sua query aqui..."></textarea>'
       +'<div class="chra" id="chres-'+id+'"></div>'
+      +'<div id="gab-area-'+id+'"></div>'
     +'</div>';
 }
 
@@ -564,11 +565,16 @@ function chkCh(id){
 
 function togGab(id){
   var ch=CH.find(function(c){return c.id===id;});
-  var res=document.getElementById('chres-'+id);
-  var ex=document.getElementById('gab-'+id);if(ex){ex.remove();return;}
-  var d=document.createElement('div');d.id='gab-'+id;d.className='gabbox';
-  d.innerHTML='<div class="gablbl">Gabarito</div><div class="gabcode">'+esc(ch.gab)+'</div>';
-  res.appendChild(d);
+  var area=document.getElementById('gab-area-'+id);
+  var btn=document.getElementById('gabtn-'+id);
+  if(area.innerHTML!==''){
+    area.innerHTML='';
+    if(btn) btn.textContent='Mostrar gabarito';
+    return;
+  }
+  area.innerHTML='<div class="gabbox"><div class="gablbl">Gabarito</div><div class="gabcode">'+esc(ch.gab)+'</div></div>';
+  if(btn) btn.textContent='Ocultar gabarito';
+  area.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 
 function updateProg(){
