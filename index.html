@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0055)file:///C:/Users/natha/Downloads/leanacademy-sql_3.html -->
+<!-- saved from url=(0055)file:///C:/Users/natha/Downloads/leanacademy-sql_8.html -->
 <html lang="pt-BR"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,7 +16,7 @@
   --red:#f87272;--red-bg:rgba(248,114,114,0.1);
   --amber:#fbbf24;--amber-bg:rgba(251,191,36,0.1);
   --mono:'JetBrains Mono',monospace;--display:'Syne',sans-serif;
-  --radius:10px;--radius-lg:14px;a
+  --radius:10px;--radius-lg:14px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{font-size:15px}
@@ -277,7 +277,10 @@ var DB={
 
 // ── SQL ENGINE ────────────────────────────────────────────────────────────
 function sqlEngine(sql){
+  // strip line comments (-- ...) before any parsing
+  sql=sql.replace(/--[^\n]*/g,' ');
   var s=sql.trim().replace(/\s+/g,' ');
+  if(!s||s===''){ throw new Error('Query vazia.'); }
   if(!/^SELECT\b/i.test(s)) throw new Error('Apenas queries SELECT são permitidas.');
   var src=s,limitN=null,offsetN=0;
   var lm=src.match(/\bLIMIT\s+(\d+)(?:\s+OFFSET\s+(\d+))?\s*$/i);
@@ -318,13 +321,67 @@ function parseFrom(fs){
   var rows=DB[bn].map(function(r){var o={};for(var k in r)o[ba+'.'+k]=r[k];return o;});
   var jp=fs.slice(bm[0].length).trim();
   var jrx=/(INNER\s+JOIN|LEFT\s+(?:OUTER\s+)?JOIN|RIGHT\s+JOIN|JOIN)\s+(\w+)(?:\s+(?:AS\s+)?(\w+))?\s+ON\s+(.+?)(?=\s+(?:INNER|LEFT|RIGHT|JOIN)\b|$)/gi,jm;
-  while((jm=jrx.exec(jp))!==null){var jt=jm[2],ja=jm[3]||jm[2],jon=jm[4].trim(),isL=/LEFT/i.test(jm[1]);if(!DB[jt])throw new Error('Tabela desconhecida: '+jt);rows=doJoin(rows,DB[jt],ja,jon,isL);}
+  while((jm=jrx.exec(jp))!==null){var jt=jm[2],ja=jm[3]||jm[2],jon=jm[4].trim(),isL=/LEFT/i.test(jm[1]),isR=/RIGHT/i.test(jm[1]);if(!DB[jt])throw new Error('Tabela desconhecida: '+jt);rows=doJoin(rows,DB[jt],ja,jon,isL,isR);}
   return rows;
 }
-function doJoin(left,rt,ra,on,isLeft){
+function doJoin(left,rt,ra,on,isLeft,isRight){
+  // RIGHT JOIN: keep all rows from right table, null-fill left side when no match
+  if(isRight){
+    var res=[];
+    rt.forEach(function(rr){
+      var rrow={};for(var k in rr)rrow[ra+'.'+k]=rr[k];
+      var matched=false;
+      left.forEach(function(lr){
+        var c=Object.assign({},lr,rrow);
+        if(evalCond(on,c)){matched=true;res.push(c);}
+      });
+      if(!matched){
+        var nr={};if(left[0])for(var k in left[0])nr[k]=null;
+        res.push(Object.assign({},nr,rrow));
+      }
+    });
+    return res;
+  }
+  // INNER / LEFT JOIN
   var res=[];
   left.forEach(function(lr){var matched=false;rt.forEach(function(rr){var rrow={};for(var k in rr)rrow[ra+'.'+k]=rr[k];var c=Object.assign({},lr,rrow);if(evalCond(on,c)){matched=true;res.push(c);}});if(isLeft&&!matched){var nr={};if(rt[0])for(var k in rt[0])nr[ra+'.'+k]=null;res.push(Object.assign({},lr,nr));}});
   return res;
+}
+// Safe arithmetic evaluator — no eval/Function(), works under any CSP
+function safeArith(expr,row){
+  // replace identifiers with their numeric values
+  var resolved=expr.replace(/(\w+\.\w+|\b[a-zA-Z_]\w*\b)/g,function(m){
+    var v=findV(row,m.indexOf('.')>-1?m.split('.').pop():m);
+    return (v!==undefined&&v!==null)?String(Number(v)):'0';
+  });
+  // only allow digits, operators, parens, dots, spaces
+  if(!/^[\d\s\+\-\*\/\(\)\.]+$/.test(resolved))return undefined;
+  try{return calcExpr(resolved);}catch(e){return undefined;}
+}
+function calcExpr(s){
+  s=s.trim();
+  // find lowest-precedence operator outside parens (+ or -), right to left
+  var depth=0,i;
+  for(i=s.length-1;i>=0;i--){
+    if(s[i]===')') depth++;
+    else if(s[i]==='(') depth--;
+    else if(!depth&&(s[i]==='+'||s[i]==='-')&&i>0){
+      return calcExpr(s.slice(0,i))+((s[i]==='+'?1:-1)*calcExpr(s.slice(i+1)));
+    }
+  }
+  // then * and /
+  depth=0;
+  for(i=s.length-1;i>=0;i--){
+    if(s[i]===')') depth++;
+    else if(s[i]==='(') depth--;
+    else if(!depth&&(s[i]==='*'||s[i]==='/')&&i>0){
+      var l=calcExpr(s.slice(0,i)),r=calcExpr(s.slice(i+1));
+      return s[i]==='*'?l*r:(r!==0?l/r:0);
+    }
+  }
+  // parentheses
+  if(s[0]==='('&&s[s.length-1]===')') return calcExpr(s.slice(1,-1));
+  return parseFloat(s)||0;
 }
 function splitOuter(expr,sep){var parts=[],depth=0,cur='',i=0,sl=sep.toLowerCase(),el=expr.toLowerCase();while(i<expr.length){var c=expr[i];if(c==='(')depth++;else if(c===')')depth--;else if(!depth&&el.slice(i,i+sl.length)===sl){parts.push(cur);cur='';i+=sl.length;continue;}cur+=c;i++;}parts.push(cur);return parts.length>1?parts:[expr];}
 function resolveVal(s,row){
@@ -333,12 +390,56 @@ function resolveVal(s,row){
   if(/^".*"$/.test(s))return s.slice(1,-1);
   if(/^-?\d+(\.\d+)?$/.test(s))return parseFloat(s);
   if(/^NULL$/i.test(s))return null;
-  if(/^\(SELECT\b/i.test(s)){try{var r=sqlEngine(s.slice(1,-1));return r.length?Object.values(r[0])[0]:null;}catch(e){return null;}}
-  if(/[\+\-\*\/]/.test(s)&&!/^\w+\s*\(/.test(s)){try{var ex2=s.replace(/(\w+\.\w+|\b[a-zA-Z_]\w*\b)/g,function(m){var v=findV(row,m.replace(/^\w+\./,''));return v!==undefined?JSON.stringify(v):m;});return Function('"use strict";return('+ex2+')')();}catch(e){}}
-  var col=s.indexOf('.')>-1?s.split('.').pop():s;return findV(row,col);
+  if(/^\(SELECT\b/i.test(s)){
+    // find balanced closing paren
+    var depth=1,j=1;
+    while(j<s.length&&depth>0){if(s[j]==='(')depth++;else if(s[j]===')')depth--;j++;}
+    try{var r=sqlEngine(s.slice(1,j-1));return r.length?Object.values(r[0])[0]:null;}catch(e){return null;}
+  }
+  // Direct key lookup — handles aggregate keys like COUNT(pe.id_pedido) stored by doGroupBy
+  if(row&&row.hasOwnProperty(s))return row[s];
+  // Arithmetic expressions — use safe evaluator instead of Function()/eval
+  if(/[\+\-\*\/]/.test(s)&&!/^\w+\s*\(/.test(s)){
+    var r=safeArith(s,row);
+    if(r!==undefined)return r;
+  }
+  // Only strip table prefix when there are no parens (avoids 'COUNT(t.col)'.split('.')=[...,'col)'])
+  var col=(s.indexOf('.')>-1&&!/[()]/.test(s))?s.split('.').pop():s;
+  return findV(row,col);
+}
+// Extract (SELECT ...) respecting nested parens (lazy regex stops at first ) which breaks AVG(col) etc.)
+function extractSubqueries(expr){
+  var res=[];
+  for(var i=0;i<expr.length;i++){
+    if(expr[i]==='('&&/^\s*SELECT\b/i.test(expr.slice(i+1,i+10))){
+      var depth=1,j=i+1;
+      while(j<expr.length&&depth>0){if(expr[j]==='(')depth++;else if(expr[j]===')')depth--;j++;}
+      res.push({start:i,end:j,sql:expr.slice(i+1,j-1)});
+    }
+  }
+  return res;
+}
+function replaceSubqueries(expr){
+  var subs=extractSubqueries(expr);
+  // replace right-to-left so indices stay valid
+  for(var i=subs.length-1;i>=0;i--){
+    var sub=subs[i];
+    var val;
+    try{var r=sqlEngine(sub.sql);val=r.length?Object.values(r[0])[0]:null;}catch(e){val=null;}
+    var replacement=typeof val==='string'?"'"+val+"'":(val==null?'NULL':String(val));
+    expr=expr.slice(0,sub.start)+replacement+expr.slice(sub.end);
+  }
+  return expr;
 }
 function evalCond(expr,row){
-  expr=expr.replace(/\(\s*SELECT[\s\S]+?\)/gi,function(sub){try{var r=sqlEngine(sub.slice(1,-1));if(r.length){var v=Object.values(r[0])[0];return typeof v==='string'?"'"+v+"'":String(v);}return 'NULL';}catch(e){return 'NULL';}});
+  expr=replaceSubqueries(expr);
+
+  // ── BETWEEN must come BEFORE AND-split
+  var nbtm=expr.match(/^(.+?)\s+NOT\s+BETWEEN\s+(.+?)\s+AND\s+(.+?)\s*$/i);
+  if(nbtm){var v=resolveVal(nbtm[1],row),lo=resolveVal(nbtm[2],row),hi=resolveVal(nbtm[3],row);return !(String(v)>=String(lo)&&String(v)<=String(hi));}
+  var btm=expr.match(/^(.+?)\s+BETWEEN\s+(.+?)\s+AND\s+(.+?)\s*$/i);
+  if(btm){var v=resolveVal(btm[1],row),lo=resolveVal(btm[2],row),hi=resolveVal(btm[3],row);return String(v)>=String(lo)&&String(v)<=String(hi);}
+
   var or=splitOuter(expr,' OR ');if(or.length>1)return or.some(function(p){return evalCond(p.trim(),row);});
   var and=splitOuter(expr,' AND ');if(and.length>1)return and.every(function(p){return evalCond(p.trim(),row);});
   if(/^NOT\s+/i.test(expr))return !evalCond(expr.replace(/^NOT\s+/i,''),row);
@@ -347,8 +448,6 @@ function evalCond(expr,row){
   if(inm){var lv=resolveVal(inm[1],row);var items=splitOuter(inm[3],',').map(function(x){return resolveVal(x.trim(),row);});var found=items.some(function(i){return leq(lv,i);});return inm[2]?!found:found;}
   var lkm=expr.match(/^(.+?)\s+(NOT\s+)?LIKE\s+(.+)\s*$/i);
   if(lkm){var lv=resolveVal(lkm[1],row),pat=resolveVal(lkm[3],row);var rx=new RegExp('^'+String(pat).replace(/%/g,'.*').replace(/_/g,'.')+'$','i');var res=rx.test(String(lv||''));return lkm[2]?!res:res;}
-  var btm=expr.match(/^(.+?)\s+BETWEEN\s+(.+?)\s+AND\s+(.+)\s*$/i);
-  if(btm){var v=resolveVal(btm[1],row),lo=resolveVal(btm[2],row),hi=resolveVal(btm[3],row);return String(v)>=String(lo)&&String(v)<=String(hi);}
   var inullm=expr.match(/^(.+?)\s+IS\s+(NOT\s+)?NULL\s*$/i);
   if(inullm){var v=resolveVal(inullm[1],row);return inullm[2]?v!=null:v==null;}
   var cm=expr.match(/^(.+?)\s*(!=|<>|<=|>=|=|<|>)\s*(.+)$/);
@@ -395,35 +494,35 @@ var CH=[
    desc:'Retorne apenas o nome e o preço de todos os produtos, renomeando "preco" para "valor". Ordene do mais barato para o mais caro.',
    tags:['SELECT','AS (renomear)','ORDER BY'],
    gab:'SELECT nome, preco AS valor\nFROM produtos\nORDER BY valor ASC',
-   check:function(r){return r.length===12&&r[0].hasOwnProperty('valor')&&r[0].hasOwnProperty('nome')&&r[0].valor<=r[r.length-1].valor;}},
+   check:function(r){return r.length===12&&r[0].hasOwnProperty('valor')&&r[0].hasOwnProperty('nome')&&Number(r[0].valor)<=Number(r[r.length-1].valor);}},
 
   {id:2,sec:'core',lv:'Básico',cl:'#4ade80',
    title:'Filtre com WHERE',
    desc:'Liste o nome e a cidade de todos os clientes que moram em "São Paulo".',
    tags:['WHERE','SELECT'],
    gab:'SELECT nome, cidade\nFROM clientes\nWHERE cidade = \'São Paulo\'',
-   check:function(r){return r.length>0&&r.every(function(x){return String(x.cidade).toLowerCase()==='são paulo';});}},
+   check:function(r){return r.length===3&&r.every(function(x){var c=x.cidade||x.CIDADE||'';return c.toLowerCase().includes('paulo');});}},
 
   {id:3,sec:'core',lv:'Básico',cl:'#4ade80',
    title:'Ordene os resultados',
-   desc:'Mostre o nome e o total de todos os pedidos, ordenados do maior para o menor total.',
+   desc:'Mostre o id e o total de todos os pedidos, ordenados do maior para o menor total.',
    tags:['ORDER BY DESC'],
    gab:'SELECT id_pedido, total\nFROM pedidos\nORDER BY total DESC',
-   check:function(r){return r.length===8&&r[0].total>=r[r.length-1].total;}},
+   check:function(r){return r.length===8&&Number(r[0].total)>=Number(r[r.length-1].total);}},
 
   {id:4,sec:'core',lv:'Básico',cl:'#4ade80',
    title:'IN e NOT IN',
-   desc:'Liste os pedidos com status "entregue" ou "em andamento" usando IN. Em seguida (numa query só), exclua os cancelados com NOT IN.',
+   desc:'Liste os pedidos com status "entregue" ou "em andamento". Use IN (ou NOT IN excluindo "cancelado"). Mostre id_pedido, status e total.',
    tags:['IN','NOT IN'],
-   gab:'SELECT * FROM pedidos\nWHERE status IN (\'entregue\', \'em andamento\')\n\n-- ou equivalente com NOT IN:\nSELECT * FROM pedidos\nWHERE status NOT IN (\'cancelado\')',
-   check:function(r){return r.length>0&&r.every(function(x){return x.status!=='cancelado';});}},
+   gab:'SELECT id_pedido, status, total\nFROM pedidos\nWHERE status IN (\'entregue\', \'em andamento\')',
+   check:function(r){return r.length>0&&r.every(function(x){return (x.status||'').toLowerCase()!=='cancelado';});}},
 
   {id:5,sec:'core',lv:'Básico',cl:'#4ade80',
    title:'Filtro de datas com BETWEEN',
    desc:'Retorne todos os pedidos realizados entre 01/01/2024 e 31/03/2024 (1º trimestre), mostrando id_pedido, data_pedido e total.',
    tags:['BETWEEN','datas'],
    gab:'SELECT id_pedido, data_pedido, total\nFROM pedidos\nWHERE data_pedido BETWEEN \'2024-01-01\' AND \'2024-03-31\'',
-   check:function(r){return r.length>0&&r.every(function(x){return x.data_pedido>='2024-01-01'&&x.data_pedido<='2024-03-31';});}},
+   check:function(r){return r.length===3&&r.every(function(x){var d=x.data_pedido||'';return d>='2024-01-01'&&d<='2024-03-31';});}},
 
   {id:6,sec:'core',lv:'Intermediário',cl:'#fbbf24',
    title:'INNER JOIN — produto e categoria',
@@ -437,50 +536,50 @@ var CH=[
    desc:'Liste todos os clientes e o total de pedidos de cada um. Clientes sem pedidos devem aparecer com 0. Renomeie a contagem para "qtd_pedidos".',
    tags:['LEFT JOIN','COUNT','GROUP BY','AS (renomear)'],
    gab:'SELECT cl.nome, COUNT(pe.id_pedido) AS qtd_pedidos\nFROM clientes cl\nLEFT JOIN pedidos pe ON cl.id_cliente = pe.id_cliente\nGROUP BY cl.id_cliente, cl.nome\nORDER BY qtd_pedidos DESC',
-   check:function(r){return r.length===7&&r[0].hasOwnProperty('qtd_pedidos');}},
+   check:function(r){return r.length===7&&r[0].hasOwnProperty('qtd_pedidos')&&r.some(function(x){return Number(x.qtd_pedidos)===0;});}},
 
   {id:8,sec:'core',lv:'Intermediário',cl:'#fbbf24',
    title:'GROUP BY — resumo por cidade',
    desc:'Mostre cada cidade e o número de clientes nela. Renomeie a contagem para "total_clientes". Ordene da cidade com mais clientes para a com menos.',
    tags:['GROUP BY','COUNT','ORDER BY','AS (renomear)'],
    gab:'SELECT cidade, COUNT(*) AS total_clientes\nFROM clientes\nGROUP BY cidade\nORDER BY total_clientes DESC',
-   check:function(r){return r.length>0&&r[0].hasOwnProperty('total_clientes')&&r[0].total_clientes>=r[r.length-1].total_clientes;}},
+   check:function(r){return r.length>0&&r[0].hasOwnProperty('total_clientes')&&Number(r[0].total_clientes)>=Number(r[r.length-1].total_clientes);}},
 
   {id:9,sec:'core',lv:'Intermediário',cl:'#fbbf24',
    title:'Combinando tudo — relatório de vendas',
    desc:'Para cada cliente: nome, cidade, quantidade de pedidos (como "qtd_pedidos") e soma total gasta (como "total_gasto"). Inclua clientes sem pedidos. Filtre apenas os que fizeram pelo menos 1 pedido. Ordene pelo maior gasto.',
    tags:['LEFT JOIN','GROUP BY','HAVING','SUM','COUNT','AS'],
    gab:'SELECT cl.nome, cl.cidade,\n  COUNT(pe.id_pedido) AS qtd_pedidos,\n  SUM(pe.total) AS total_gasto\nFROM clientes cl\nLEFT JOIN pedidos pe ON cl.id_cliente = pe.id_cliente\nGROUP BY cl.id_cliente, cl.nome, cl.cidade\nHAVING COUNT(pe.id_pedido) > 0\nORDER BY total_gasto DESC',
-   check:function(r){return r.length>0&&r[0].hasOwnProperty('total_gasto')&&r[0].hasOwnProperty('qtd_pedidos')&&r[0].total_gasto>=r[r.length-1].total_gasto;}},
+   check:function(r){return r.length>0&&r[0].hasOwnProperty('total_gasto')&&r[0].hasOwnProperty('qtd_pedidos')&&r.every(function(x){return Number(x.qtd_pedidos)>0;})&&Number(r[0].total_gasto)>=Number(r[r.length-1].total_gasto);}},
 
   // ── APROFUNDAMENTO (OPCIONAIS) ────────────────────────────────────────
   {id:10,sec:'extra',lv:'Avançado',cl:'#a78bfa',
    title:'RIGHT JOIN — todas as categorias',
-   desc:'Liste todas as categorias e a quantidade de produtos em cada uma. Mesmo categorias sem produtos devem aparecer. Use RIGHT JOIN.',
+   desc:'Liste todas as categorias e a quantidade de produtos em cada uma. Mesmo categorias sem produtos devem aparecer com 0. Use RIGHT JOIN.',
    tags:['RIGHT JOIN','COUNT','GROUP BY'],
    gab:'SELECT c.nome_categoria, COUNT(p.id_produto) AS total_produtos\nFROM produtos p\nRIGHT JOIN categorias c ON p.id_categoria = c.id_categoria\nGROUP BY c.id_categoria, c.nome_categoria\nORDER BY total_produtos DESC',
    check:function(r){return r.length===5&&r[0].hasOwnProperty('total_produtos');}},
 
   {id:11,sec:'extra',lv:'Avançado',cl:'#a78bfa',
    title:'HAVING — filtrar grupos',
-   desc:'Mostre apenas as categorias que possuem mais de 2 produtos cadastrados, com a contagem.',
+   desc:'Mostre apenas as categorias que possuem mais de 2 produtos cadastrados, com a contagem renomeada para "total".',
    tags:['GROUP BY','HAVING','COUNT'],
    gab:'SELECT c.nome_categoria, COUNT(p.id_produto) AS total\nFROM categorias c\nINNER JOIN produtos p ON c.id_categoria = p.id_categoria\nGROUP BY c.id_categoria, c.nome_categoria\nHAVING COUNT(p.id_produto) > 2\nORDER BY total DESC',
-   check:function(r){return r.length>0&&r.every(function(x){return x.total>2;});}},
+   check:function(r){return r.length>0&&r[0].hasOwnProperty('total')&&r.every(function(x){return Number(x.total)>2;});}},
 
   {id:12,sec:'extra',lv:'Avançado',cl:'#a78bfa',
    title:'Subquery — acima da média',
    desc:'Liste nome e preço dos produtos cujo preço está acima da média de todos os produtos. Use uma subquery no WHERE.',
    tags:['Subquery','AVG','WHERE'],
    gab:'SELECT nome, preco\nFROM produtos\nWHERE preco > (SELECT AVG(preco) FROM produtos)\nORDER BY preco DESC',
-   check:function(r){return r.length>0&&r[0].preco>r[r.length-1].preco;}},
+   check:function(r){return r.length>0&&r.every(function(x){return Number(x.preco)>0;})&&Number(r[0].preco)>=Number(r[r.length-1].preco);}},
 
   {id:13,sec:'extra',lv:'Expert',cl:'#f87272',
    title:'Múltiplos JOINs — ticket médio por categoria',
    desc:'Calcule o ticket médio dos pedidos por categoria de produto, juntando 4 tabelas: pedidos, itens_pedido, produtos e categorias. Ordene pelo maior ticket médio.',
    tags:['4 JOINs','AVG','GROUP BY'],
    gab:'SELECT c.nome_categoria,\n  AVG(pe.total) AS ticket_medio\nFROM pedidos pe\nINNER JOIN itens_pedido ip ON pe.id_pedido = ip.id_pedido\nINNER JOIN produtos p ON ip.id_produto = p.id_produto\nINNER JOIN categorias c ON p.id_categoria = c.id_categoria\nGROUP BY c.id_categoria, c.nome_categoria\nORDER BY ticket_medio DESC',
-   check:function(r){return r.length>0&&r[0].hasOwnProperty('nome_categoria')&&r[0].ticket_medio>=r[r.length-1].ticket_medio;}}
+   check:function(r){return r.length>0&&r[0].hasOwnProperty('nome_categoria')&&r[0].hasOwnProperty('ticket_medio')&&Number(r[0].ticket_medio)>=Number(r[r.length-1].ticket_medio);}}
 ];
 
 var TOTAL_CORE=CH.filter(function(c){return c.sec==='core';}).length;
@@ -530,14 +629,18 @@ function loadCh(id){
     +'</div>'
     +'<div class="chea" id="chea-'+id+'">'
       +'<div class="chebar">'
-        +'<button class="btn primary" onclick="chkCh('+id+')">✓ Verificar</button>'
-        +'<button class="btn" onclick="runCh('+id+')">▶ Executar</button>'
-        +'<button class="btn" id="gabtn-'+id+'" onclick="togGab('+id+')">Mostrar gabarito</button>'
+        +'<button class="btn primary" id="btncheck-'+id+'">✓ Verificar</button>'
+        +'<button class="btn" id="btnrun-'+id+'">▶ Executar</button>'
+        +'<button class="btn" id="gabtn-'+id+'">Mostrar gabarito</button>'
       +'</div>'
       +'<textarea class="ched" id="ched-'+id+'" placeholder="-- Escreva sua query aqui..."></textarea>'
       +'<div class="chra" id="chres-'+id+'"></div>'
       +'<div id="gab-area-'+id+'"></div>'
     +'</div>';
+  // attach listeners after DOM is ready — avoids inline onclick + CSP issues
+  document.getElementById('btncheck-'+id).addEventListener('click',function(){chkCh(id);});
+  document.getElementById('btnrun-'+id).addEventListener('click',function(){runCh(id);});
+  document.getElementById('gabtn-'+id).addEventListener('click',function(){togGab(id);});
 }
 
 function runCh(id){
